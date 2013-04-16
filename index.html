@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>My Game!!!</title>
+		<link rel="stylesheet" href="stylesheet.css" type="text/css" />
+		<script src="object.js"></script>
+  	</head>
+	
+	<body onLoad="update();">
+		<h1>Play Game</h1>
+     		
+		<div id="myCanvasDiv">
+		
+		<canvas id="myCanvas" style="border: 1px solid #BA3;" width="800" height="400"></canvas>
+		<script>
+			var canvas = document.getElementById('myCanvas');
+			var context = canvas.getContext('2d');
+			
+			context.textAlign = 'center';
+
+			myCanvas.addEventListener('mousemove', ev_mousemove, false);
+		
+			myCanvas.addEventListener('mousedown', fire, false);
+		// do stuff here
+		</script>
+		</div>
+
+	<div id="mousePos"></div>
+	
+	
+	</body>	
+</html>
+

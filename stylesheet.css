@@ -1,0 +1,10 @@
+#myCanvasDiv
+{
+	width: 800px;
+	height: 400px;
+	cursor:none;
+	i-moz-box-shadow:0px 0px 10px 7px #777777;
+	-webkit-box-shadow:0px 0px 10px 7px #777777;
+	box-shadow:0px 0px 10px 7px #777777;
+}
+
