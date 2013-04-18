@@ -90,7 +90,7 @@ function rotate(ev)
 	context.translate(-xcent, -ycent);
 	context.drawImage(player, xcent - player.width/2, ycent - player.height / 2);
 
-	context.clearRect(0, 0, 800, 400);	
+	 context.clearRect(canvas.width/2, canvas.height/2, (canvas.width/2)+player.width, (canvas.height/2)+player.height);
 	context.save();
 	context.translate(xcent, ycent);
 	//convert angle from degrees to radians
