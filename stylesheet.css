@@ -1,10 +1,27 @@
 #myCanvasDiv
 {
-	cursor:crosshair;
+	position: relative;
+	width: 1000px;
+	height: 500px;
+	margin: 0 auto;
+	border: 1px solid #BA3;
 }
 
-#playercanvas
+
+
+#myCanvas
 {
-	
+	cursor:crosshair;
+	position: absolute;
+	z-index: 0;
+	border: 1px solid #BA3;	
+}
+
+#playerCanvas
+{
+	cursor:crosshair;
+	position: absolute;
+	z-index: 1;
+	border: 1px solid #BA3;
 }
 

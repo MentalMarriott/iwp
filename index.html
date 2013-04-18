@@ -10,16 +10,21 @@
 		<h1>Play Game</h1>
      		
 		<div id="myCanvasDiv">
-	
-		<canvas id="myCanvas" style="border: 1px solid #BA3;" width="100%" height="100%"></canvas>
+		<canvas id="myCanvas" width="1000" height="500">Error: Browser does not support canvas element.</canvas>
+
+		<canvas id="playerCanvas"  width="50" height="50">Error: Browser does not support canvas element.</canvas>
+		</div>
 		
 		<script>
 			var canvas = document.getElementById('myCanvas');
 			var context = canvas.getContext('2d');
 			
-			context.canvas.width  = window.innerWidth-200;
-			context.canvas.height = window.innerHeight-200;
-			context.textAlign = 'center';
+		//	context.canvas.width  = window.innerWidth-200;
+		//	context.canvas.height = window.innerHeight-200;
+
+			var pCanvas = document.getElementById('playerCanvas');
+			var pContext = pCanvas.getContext('2d');
+			 
 
 		myCanvas.addEventListener('mousemove', rotate, false);
 		
@@ -27,7 +32,6 @@
 		// do stuff here
 		</script>
 	
-		</div>
 
 	<div id="mousePos"></div>
 	

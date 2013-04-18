@@ -1,6 +1,7 @@
 //var context;
 //var x, y;
 var angle;
+var previousAngle;
 
 function ev_mousemove(ev) 
 {
@@ -47,7 +48,7 @@ function angleBetweenPlayerMouse(ev, player)
 	y = pos[1];
 	
 	var xcent = canvas.width/2 + player.width/2;
-	var ycent = canvas.height/2 + player.height/2 +80;
+	var ycent = canvas.height/2 + player.height/2 ;
 	
 	angle = Math.atan2(x - xcent, -(y - ycent));
 	
@@ -76,7 +77,7 @@ function rotate(ev)
 	angleBetweenPlayerMouse(ev, player);
 
 	//resets image to riginal location so rotates to new correct version
-	context.clearRect(canvas.width/2, canvas.height/2, (canvas.width/2)+player.width, (canvas.height/2)+player.height);
+	context.clearRect(canvas.width/2, canvas.height/2, player.width, player.height);
 
 	context.save();
 	context.translate(xcent, ycent);
@@ -84,7 +85,7 @@ function rotate(ev)
 	context.translate(-xcent, -ycent);
 	context.drawImage(player, xcent - player.width/2, ycent - player.height / 2);
 
-	 context.clearRect(canvas.width/2, canvas.height/2, (canvas.width/2)+player.width, (canvas.height/2)+player.height);
+	 context.clearRect(canvas.width/2, canvas.height/2, player.width, player.height);
 	context.save();
 	context.translate(xcent, ycent);
 	//convert angle from degrees to radians
@@ -102,6 +103,11 @@ function player()
 {
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	
+
+	//pCanvas.style.left = "100px"//canvas.width/2;
+	pCanvas.style.top = canvas.height/2 + "px";
+	pCanvas.style.left = canvas.width/2 + "px";
+
 	var player = new Image();
 	player.src = "ball.png";
 
@@ -132,13 +138,16 @@ var mouseLoc = function(ev)
 }
 
 //--------------------------------------Bullets and collision
-function bullet(ev)
+function bullet(x, y)
 {
 	var bullets = new Array();
-
-	bullet = new Image();
+	
+	var bullet = new Image();
 	bullet.src = 'bullet.png';
 
+	context.drawImage(bullet, 390, 212);
+
+/*
 	speed = 10;
 	
 	var xvel = speed * Math.cos(angle);
@@ -156,6 +165,7 @@ function bullet(ev)
 	}
 	var id = setInterval(updateBullets, 10);
 	bullet.angle = angle; 
+*/
 }
 
 //player fire
@@ -165,12 +175,14 @@ function fire(ev)
 	var x, y;
 	var pos = mouseLoc(ev)
 	x = pos[0];
-	y = pos[1];
+	y = pos[1]-80;
 
-	bullet(ev);
-	var left = 0
+	bullet(x, y);
+//	context.drawImage(bullet, x, y);
+//	bullet(ev);
+//	var left = 0
 	
-	function frame() 
+/*	function frame() 
 	{
 	
 		context.clearRect(0, 0, document.width, document.height);
@@ -187,6 +199,6 @@ function fire(ev)
 	}
 	
 	var id = setInterval(frame, 10) // draw every 10ms
-	
+*/	
 }
 
