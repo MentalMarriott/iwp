@@ -42,19 +42,17 @@ function angleBetweenPlayerMouse(ev, player)
 	x = pos[0];
 	y = pos[1];
 	
-	var xcent = canvas.width/2;
-	var ycent = canvas.height/2;
+	var xcent = canvas.width/2 + player.width/2;
+	var ycent = canvas.height/2 + player.height/2 +80;
 	
-	var angle = Math.atan2((xcent + player.width/2)-x, ycent+80+(player.height/2))
+	var angle = Math.atan2(x - xcent, -(y - ycent));
 	
-	console.log(angle);
-	angle = Math.PI*2 - angle;
+	//angle = Math.PI*2 - angle;
 	
 	console.log(angle);
 
 	return angle;
 }
-
 
 
 /**
