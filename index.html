@@ -6,7 +6,7 @@
 		<script src="object.js"></script>
   	</head>
 	
-	<body onload="player(400, 200, 0, 0)">
+	<body onload="player(document.width/2, document.height/2)">
 		<h1>Play Game</h1>
      		
 		<div id="myCanvasDiv">
@@ -23,7 +23,7 @@
 
 		myCanvas.addEventListener('mousemove', rotate, false);
 		
-	//	myCanvas.addEventListener('mousedown', rotate, false);
+		myCanvas.addEventListener('mousedown', fire, false);
 		// do stuff here
 		</script>
 	

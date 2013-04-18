@@ -1,10 +1,10 @@
 #myCanvasDiv
 {
-	width: 85%;
-	height: 100%;
 	cursor:crosshair;
-	i-moz-box-shadow:0px 0px 10px 7px #777777;
-	-webkit-box-shadow:0px 0px 10px 7px #777777;
-	box-shadow:0px 0px 10px 7px #777777;
+}
+
+#playercanvas
+{
+	
 }
 
