@@ -33,51 +33,82 @@ function ev_mousemove(ev)
 	player(x, y);	
 }
 
-function rotate()
+function mousePosDisplay(ev)
 {
+	var x, y;
+	var pos = mouseLoc(ev);
+	x = pos[0];
+	y = pos[1];
+
+	document.getElementById("mousePos").innerHTML = ("x=" + x +", y=" + y);
+
+}
+
+function rotate(ev)
+{
+	mousePosDisplay(ev);
+
+	//var previousAngle;
+
+	if (typeof previousAngle === 'undefined')
+	{
+		previousAngle = 0;
+	}
+	
 	var player = new Image();
 	player.src = "ball.png";
 
 	var xcent = 400 + player.width/2;
 	var ycent = 200 + player.height/2;
-
 	
+	var x, y;
+	var pos = mouseLoc(ev);
+	x = pos[0];
+	y = pos[1];
+
+	//calculate angle between mouse and center of player
+	var angle = Math.atan2(xcent - x, ycent+80 - y);
+	angle = Math.PI*2 - angle;
+	
+	//makes all angles positive
+	if (angle < 0)
+   		angle += 2 * Math.PI;  	
+
+	//returns correct angle
+	console.log(previousAngle);	
+
+	//resets image to riginal location so rotates to new correct version
 	context.clearRect(0, 0, 800, 400);
+	context.save();
+	context.translate(xcent, ycent);
+	context.rotate((Math.PI*2) - previousAngle);
+	context.translate(-xcent, -ycent);
+	context.drawImage(player, xcent - player.width/2, ycent - player.height / 2);
+
+	context.clearRect(0, 0, 800, 400);	
 
 	context.save();
 
 	context.translate(xcent, ycent);
 
-	context.rotate(7 * Math.PI / 180);
+	//convert angle from degrees to radians
+	context.rotate(angle);// * (Math.PI/180));//7 * Math.PI/180);
 
 	context.translate(-xcent, -ycent);
 	//context.clearRect(0, 0, document.width, document.height);
 	context.drawImage(player, xcent - player.width / 2, ycent - player.height / 2);
-
+	//stores angle so can rotate back to original pos
+	previousAngle = angle;
 }
 
 function player(x, y, angle, ev)
 {
 	context.clearRect(0, 0, document.width-200, document.height-200);
 	
-//	var pos = mouseLoc(ev);
-//	x = pos[0]-30;
-//	y = pos[1]-100;	
-
 	var player = new Image();
 	player.src = "ball.png";
 
-//	 context.save();
-//	 context.translate(x,y);     
-//	 context.rotate(angle * Math.PI / 180);
          context.drawImage(player, x, y); 
-//         context.restore();  
-
-
-//	context.drawImage(player, 0, 0);
-
-	 // And restore the context ready for the next loop
-    //context.restore();
 }
 
 
