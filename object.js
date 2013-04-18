@@ -35,14 +35,24 @@ function mousePosDisplay(ev)
 
 }
 
-function angleBetweenPlayerMouse(ev)
+function angleBetweenPlayerMouse(ev, player)
 {
 	var x, y;
 	var pos = mouseLoc(ev);
 	x = pos[0];
 	y = pos[1];
+	
+	var xcent = canvas.width/2;
+	var ycent = canvas.height/2;
+	
+	var angle = Math.atan2((xcent + player.width/2)-x, ycent+80+(player.height/2))
+	
+	console.log(angle);
+	angle = Math.PI*2 - angle;
+	
+	console.log(angle);
 
-	var angle = Math.atan2()
+	return angle;
 }
 
 
@@ -65,14 +75,11 @@ function rotate(ev)
 	var xcent = canvas.width/2 + player.width/2;
 	var ycent = canvas.height/2 + player.height/2;
 	
-	var x, y;
-	var pos = mouseLoc(ev);
-	x = pos[0];
-	y = pos[1];
+	var angle = angleBetweenPlayerMouse(ev, player);
 
 	//calculate angle between mouse and center of player
-	var angle = Math.atan2(xcent - x, ycent+80 - y);
-	angle = Math.PI*2 - angle;
+	//var angle = Math.atan2(xcent - x, ycent+80 - y);
+	//angle = Math.PI*2 - angle;
 	
 	//makes all angles positive
 	//if (angle < 0)
