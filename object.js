@@ -1,6 +1,6 @@
 //var context;
 //var x, y;
-
+var angle;
 
 function ev_mousemove(ev) 
 {
@@ -35,6 +35,10 @@ function mousePosDisplay(ev)
 
 }
 
+
+/**
+*gets angle between mouse and player and returns the result as radians
+*/
 function angleBetweenPlayerMouse(ev, player)
 {
 	var x, y;
@@ -45,13 +49,9 @@ function angleBetweenPlayerMouse(ev, player)
 	var xcent = canvas.width/2 + player.width/2;
 	var ycent = canvas.height/2 + player.height/2 +80;
 	
-	var angle = Math.atan2(x - xcent, -(y - ycent));
-	
-	//angle = Math.PI*2 - angle;
+	angle = Math.atan2(x - xcent, -(y - ycent));
 	
 	console.log(angle);
-
-	return angle;
 }
 
 
@@ -73,18 +73,7 @@ function rotate(ev)
 	var xcent = canvas.width/2 + player.width/2;
 	var ycent = canvas.height/2 + player.height/2;
 	
-	var angle = angleBetweenPlayerMouse(ev, player);
-
-	//calculate angle between mouse and center of player
-	//var angle = Math.atan2(xcent - x, ycent+80 - y);
-	//angle = Math.PI*2 - angle;
-	
-	//makes all angles positive
-	//if (angle < 0)
-   	//	angle += 2 * Math.PI;  	
-
-	//returns correct angle
-	//console.log(previousAngle);	
+	angleBetweenPlayerMouse(ev, player);
 
 	//resets image to riginal location so rotates to new correct version
 	context.clearRect(canvas.width/2, canvas.height/2, (canvas.width/2)+player.width, (canvas.height/2)+player.height);
@@ -107,6 +96,7 @@ function rotate(ev)
 	//stores angle so can rotate back to original pos
 	previousAngle = angle;
 }
+
 
 function player()
 {
@@ -141,18 +131,32 @@ var mouseLoc = function(ev)
 	return [x, y];
 }
 
-function bullet(x, y)
+//--------------------------------------Bullets and collision
+function bullet(ev)
 {
-	var players = new Array();
+	var bullets = new Array();
 
-	base_image = new Image();
-	base_image.src = 'bullet.png';
+	bullet = new Image();
+	bullet.src = 'bullet.png';
 
-	players.push(base_image);
-
+	speed = 10;
 	
-}
+	var xvel = speed * Math.cos(angle);
+	var yvel = speed * Math.sin(angle);	
 
+	bullets.push(bullet);
+
+	function updateBullets()
+	{
+		for (var bullet in bullets)
+		{
+				
+		}
+
+	}
+	var id = setInterval(updateBullets, 10);
+	bullet.angle = angle; 
+}
 
 //player fire
 function fire(ev)
@@ -163,14 +167,7 @@ function fire(ev)
 	x = pos[0];
 	y = pos[1];
 
-	/*
-	var bullets = new Array();
-	
-	bullets.push(draw_bullet(x, y));
-	//check if player has gun	
-	//update when clicked so falls
-	//window.setInterval(travel(x, y, bullets), 3000);
-	*/
+	bullet(ev);
 	var left = 0
 	
 	function frame() 
