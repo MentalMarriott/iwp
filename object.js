@@ -46,7 +46,7 @@ function angleBetweenPlayerMouse(ev, player)
 	var pos = mouseLoc(ev);
 	x = pos[0];
 	y = pos[1];
-	
+
 	var xcent = canvas.width/2 + player.width/2;
 	var ycent = canvas.height/2 + player.height/2 ;
 	
@@ -71,28 +71,28 @@ function rotate(ev)
 	var player = new Image();
 	player.src = "ball.png";
 
-	var xcent = canvas.width/2 + player.width/2;
-	var ycent = canvas.height/2 + player.height/2;
+	var xcent = pCanvas.width/5 + player.width/2;
+	var ycent = pCanvas.height/5 + player.height/2;
 	
 	angleBetweenPlayerMouse(ev, player);
 
 	//resets image to riginal location so rotates to new correct version
-	context.clearRect(canvas.width/2, canvas.height/2, player.width, player.height);
+	context.clearRect(0, 0, pCanvas.width, pCanvas.height);
 
-	context.save();
-	context.translate(xcent, ycent);
-	context.rotate((Math.PI*2) - previousAngle);
-	context.translate(-xcent, -ycent);
-	context.drawImage(player, xcent - player.width/2, ycent - player.height / 2);
+	pContext.save();
+	pContext.translate(xcent, ycent);
+	pContext.rotate((Math.PI*2) - previousAngle);
+	pContext.translate(-xcent, -ycent);
+	pContext.drawImage(player, xcent - player.width/2, ycent - player.height / 2);
 
-	 context.clearRect(canvas.width/2, canvas.height/2, player.width, player.height);
-	context.save();
-	context.translate(xcent, ycent);
+	pContext.clearRect(0, 0, pCanvas.width, pCanvas.height);
+	pContext.save();
+	pContext.translate(xcent, ycent);
 	//convert angle from degrees to radians
-	context.rotate(angle);// * (Math.PI/180));//7 * Math.PI/180);
-	context.translate(-xcent, -ycent);
+	pContext.rotate(angle);// * (Math.PI/180));//7 * Math.PI/180);
+	pContext.translate(-xcent, -ycent);
 	//context.clearRect(0, 0, document.width, document.height);
-	context.drawImage(player, xcent - player.width / 2, ycent - player.height / 2);
+	pContext.drawImage(player, xcent - player.width / 2, ycent - player.height / 2);
 	
 	//stores angle so can rotate back to original pos
 	previousAngle = angle;
@@ -101,17 +101,18 @@ function rotate(ev)
 
 function player()
 {
-	context.clearRect(0, 0, canvas.width, canvas.height);
-	
-
-	//pCanvas.style.left = "100px"//canvas.width/2;
-	pCanvas.style.top = canvas.height/2 + "px";
-	pCanvas.style.left = canvas.width/2 + "px";
+	pContext.clearRect(0, 0, pCanvas.width, pCanvas.height);
 
 	var player = new Image();
-	player.src = "ball.png";
+	player.src = "ball.png";	
 
-        context.drawImage(player, canvas.width/2, canvas.height/2); 
+	//player canvas positioning and size
+	pCanvas.style.top = (canvas.height/2) + "px";
+	pCanvas.style.left = (canvas.width/2) + "px";
+	//pCanvas.style.width = "50";//(player.width + player.height/3 + "px");
+	//pCanvas.style.height = "50";//(player.height + player.height/3 + "px");
+	
+        pContext.drawImage(player, pCanvas.width/5, pCanvas.height/5); 
 }
 
 
@@ -145,7 +146,11 @@ function bullet(x, y)
 	var bullet = new Image();
 	bullet.src = 'bullet.png';
 
-	context.drawImage(bullet, 390, 212);
+	//y axis always seems to be off?
+	y = y +75;
+	x = x -5;
+
+	context.drawImage(bullet, x, y);
 
 /*
 	speed = 10;

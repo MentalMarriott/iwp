@@ -22,6 +22,6 @@
 	cursor:crosshair;
 	position: absolute;
 	z-index: 1;
-	border: 1px solid #BA3;
+	border: 2px dashed #BA3;
 }
 
