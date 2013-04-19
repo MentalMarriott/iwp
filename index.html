@@ -24,7 +24,10 @@
 
 			var pCanvas = document.getElementById('playerCanvas');
 			var pContext = pCanvas.getContext('2d');
-			 
+
+			var buffer = document.createElement('canvas');			 
+			buffer.width = canvas.width;
+			buffer.height = canvas.height;
 
 		myCanvas.addEventListener('mousemove', rotate, false);
 		

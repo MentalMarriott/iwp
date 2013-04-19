@@ -2,28 +2,7 @@
 //var x, y;
 var angle;
 var previousAngle;
-
-function ev_mousemove(ev) 
-{
-
-//	var context = document.getElementById('myCanvas').getContext('2d');
-	var x, y;
-
-	var pos = mouseLoc(ev);
-	x = pos [0];
-	y = pos [1];
-	
-	console.log(x);
-	
-	context.clearRect(0,0,document.width, document.height);
-
-	//prints x and y co ordinates of mouse
-	document.getElementById("mousePos").innerHTML = ("x=" + x + ", y="  + y);
-
-	y = y - 75;
-	
-	player(x, y);	
-}
+var bullets = [];
 
 function mousePosDisplay(ev)
 {
@@ -52,7 +31,7 @@ function angleBetweenPlayerMouse(ev, player)
 	
 	angle = Math.atan2(x - xcent, -(y - ycent));
 	
-	console.log(angle);
+	//console.log(angle);
 }
 
 
@@ -61,6 +40,7 @@ function angleBetweenPlayerMouse(ev, player)
  */
 function rotate(ev)
 {
+	//context.clearRect(0, 0, 1000, 1000);
 	mousePosDisplay(ev);
 
 	if (typeof previousAngle === 'undefined')
@@ -77,7 +57,7 @@ function rotate(ev)
 	angleBetweenPlayerMouse(ev, player);
 
 	//resets image to riginal location so rotates to new correct version
-	context.clearRect(0, 0, pCanvas.width, pCanvas.height);
+	pContext.clearRect(0, 0, pCanvas.width, pCanvas.height);
 
 	pContext.save();
 	pContext.translate(xcent, ycent);
@@ -112,9 +92,38 @@ function player()
 	//pCanvas.style.width = "50";//(player.width + player.height/3 + "px");
 	//pCanvas.style.height = "50";//(player.height + player.height/3 + "px");
 	
-        pContext.drawImage(player, pCanvas.width/5, pCanvas.height/5); 
+        pContext.drawImage(player, pCanvas.width/5, pCanvas.height/5);
+
+	updateCanvas();
+	var id = setInterval(updateCanvas, 50); 
 }
 
+//updates elements on the canvas
+function updateCanvas()
+{
+	clear();	
+	
+	bulletUpdate();
+}
+
+function bulletUpdate()
+{
+	    console.log(bullets.length);
+
+	    var speed = 5.0;    
+                 for(var i = 0; i < bullets.length; i++)
+                 {      
+			bullets[i].y += -(speed * Math.cos(bullets[i].angle));
+			bullets[i].x += speed * Math.sin(bullets[i].angle);
+ 
+                         bullets[i].draw();
+                         if(bullets[i].x > 1000 || bullets[i].y > 250)
+                         {       
+                                 bullets.splice(i, 1);
+                         }
+                 }
+
+}
 
 /**
  *Returns mouse current x and y location
@@ -139,38 +148,20 @@ var mouseLoc = function(ev)
 }
 
 //--------------------------------------Bullets and collision
-function bullet(x, y)
+function bulletObj(x, y)
 {
-	var bullets = new Array();
-	
 	var bullet = new Image();
 	bullet.src = 'bullet.png';
-
-	//y axis always seems to be off?
-	y = y +75;
-	x = x -5;
-
-	context.drawImage(bullet, x, y);
-
-/*
-	speed = 10;
-	
-	var xvel = speed * Math.cos(angle);
-	var yvel = speed * Math.sin(angle);	
-
-	bullets.push(bullet);
-
-	function updateBullets()
-	{
-		for (var bullet in bullets)
-		{
-				
-		}
-
-	}
-	var id = setInterval(updateBullets, 10);
-	bullet.angle = angle; 
-*/
+	//console.log(bullet.width);
+	this.bulletX = bullet.width; 
+	this.bulletY = bullet.height;
+	this.x = x;
+	this.y = y;
+	this.angle = angle;
+	this.draw = function(){
+		context.drawImage(bullet, this.x, this.y);
+	};
+	//console.log(this.x);
 }
 
 //player fire
@@ -180,30 +171,15 @@ function fire(ev)
 	var x, y;
 	var pos = mouseLoc(ev)
 	x = pos[0];
-	y = pos[1]-80;
+	y = pos[1];
 
-	bullet(x, y);
-//	context.drawImage(bullet, x, y);
-//	bullet(ev);
-//	var left = 0
-	
-/*	function frame() 
-	{
-	
-		context.clearRect(0, 0, document.width, document.height);
+	var bullet = new bulletObj(x, y);
+	bullets.push(bullet);
+	var numBullets = bullets.length;
+}
 
-		//left = left + 1;
-
-		bullet(x, y);
-
-		x = x + 1  // moves img 1 along x axis 
-
-
-		if (x > 800)  // check finish condition
-		clearInterval(id)
-	}
-	
-	var id = setInterval(frame, 10) // draw every 10ms
-*/	
+function clear()
+{
+	context.clearRect(0, 0, 1000, 1000);
 }
 
