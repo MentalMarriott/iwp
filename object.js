@@ -79,23 +79,26 @@ function rotate(ev)
 }
 
 
-function player()
+function init()
 {
 	pContext.clearRect(0, 0, pCanvas.width, pCanvas.height);
 
 	var player = new Image();
 	player.src = "ball.png";	
 
-	//player canvas positioning and size
-	pCanvas.style.top = (canvas.height/2) + "px";
-	pCanvas.style.left = (canvas.width/2) + "px";
+	//player canvas positioning in center of game canvas
+	var canvasXCent = ((canvas.width/2)-(pCanvas.width/2));
+	var canvasYCent = ((canvas.height/2)-(pCanvas.height/2));
+	console.log(canvasYCent);
+	pCanvas.style.top = canvasYCent + "px";
+	pCanvas.style.left = canvasXCent + "px";
 	//pCanvas.style.width = "50";//(player.width + player.height/3 + "px");
 	//pCanvas.style.height = "50";//(player.height + player.height/3 + "px");
 	
         pContext.drawImage(player, pCanvas.width/5, pCanvas.height/5);
 
 	updateCanvas();
-	var id = setInterval(updateCanvas, 50); 
+	var id = setInterval(updateCanvas, 1000/60); 
 }
 
 //updates elements on the canvas
@@ -117,7 +120,7 @@ function bulletUpdate()
 			bullets[i].x += speed * Math.sin(bullets[i].angle);
  
                          bullets[i].draw();
-                         if(bullets[i].x > 1000 || bullets[i].y > 250)
+                         if(bullets[i].x > 1000 || bullets[i].x < 0 || bullets[i].y > 500 || bullets[i].y < 0)
                          {       
                                  bullets.splice(i, 1);
                          }
