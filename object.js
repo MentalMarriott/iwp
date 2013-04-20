@@ -11,13 +11,14 @@ function mousePosDisplay(ev)
 	x = pos[0];
 	y = pos[1];
 
-	document.getElementById("mousePos").innerHTML = ("x=" + x +", y=" + y);
+//	document.getElementById("mousePos").innerHTML = ("x=" + x +", y=" + y);
 
 }
 
 
 /**
-*gets angle between mouse and player and returns the result as radians
+*gets angle between mouse and player and sets the global angle so can 
+* be used by bullets for tradgectory 
 */
 function angleBetweenPlayerMouse(ev, player)
 {
@@ -26,12 +27,10 @@ function angleBetweenPlayerMouse(ev, player)
 	x = pos[0];
 	y = pos[1];
 
-	var xcent = canvas.width/2 + player.width/2;
-	var ycent = canvas.height/2 + player.height/2 ;
+	var playerCentX = canvas.width/2;
+	var playerCentY = canvas.height/2;
 	
-	angle = Math.atan2(x - xcent, -(y - ycent));
-	
-	//console.log(angle);
+	angle = Math.atan2(-(playerCentX - x), playerCentY - y);
 }
 
 
@@ -48,11 +47,11 @@ function rotate(ev)
 		previousAngle = 0;
 	}
 	
-	var player = new Image();
-	player.src = "ball.png";
+	var player = new playerObj();
 
-	var xcent = pCanvas.width/5 + player.width/2;
-	var ycent = pCanvas.height/5 + player.height/2;
+//	player.draw();
+	var pCanvasCentX = pCanvas.width/2;
+	var pCanvasCentY = pCanvas.height/2;
 	
 	angleBetweenPlayerMouse(ev, player);
 
@@ -60,20 +59,21 @@ function rotate(ev)
 	pContext.clearRect(0, 0, pCanvas.width, pCanvas.height);
 
 	pContext.save();
-	pContext.translate(xcent, ycent);
+	pContext.translate(pCanvasCentX, pCanvasCentY);
 	pContext.rotate((Math.PI*2) - previousAngle);
-	pContext.translate(-xcent, -ycent);
-	pContext.drawImage(player, xcent - player.width/2, ycent - player.height / 2);
+	pContext.translate(-(pCanvasCentX), -(pCanvasCentY));
+	player.draw();
 
 	pContext.clearRect(0, 0, pCanvas.width, pCanvas.height);
 	pContext.save();
-	pContext.translate(xcent, ycent);
+	pContext.translate(pCanvasCentX, pCanvasCentY);
 	//convert angle from degrees to radians
 	pContext.rotate(angle);// * (Math.PI/180));//7 * Math.PI/180);
-	pContext.translate(-xcent, -ycent);
+	pContext.translate(-(pCanvasCentX), -(pCanvasCentY));
 	//context.clearRect(0, 0, document.width, document.height);
-	pContext.drawImage(player, xcent - player.width / 2, ycent - player.height / 2);
-	
+	//pContext.drawImage(player, xcent - player.width / 2, ycent - player.height / 2);
+	player.draw();	
+
 	//stores angle so can rotate back to original pos
 	previousAngle = angle;
 }
@@ -83,8 +83,7 @@ function init()
 {
 	pContext.clearRect(0, 0, pCanvas.width, pCanvas.height);
 
-	var player = new Image();
-	player.src = "ball.png";	
+	//var player = new playerObj();
 
 	//player canvas positioning in center of game canvas
 	var canvasXCent = ((canvas.width/2)-(pCanvas.width/2));
@@ -92,13 +91,28 @@ function init()
 	console.log(canvasYCent);
 	pCanvas.style.top = canvasYCent + "px";
 	pCanvas.style.left = canvasXCent + "px";
-	//pCanvas.style.width = "50";//(player.width + player.height/3 + "px");
-	//pCanvas.style.height = "50";//(player.height + player.height/3 + "px");
-	
-        pContext.drawImage(player, pCanvas.width/5, pCanvas.height/5);
+
+	//player.draw();
+	var player = new playerObj();
+
+	player.draw();
 
 	updateCanvas();
 	var id = setInterval(updateCanvas, 1000/60); 
+}
+
+function playerObj()
+{
+	var player = new Image();
+	player.src = 'ball.png';
+	this.width = player.width;
+	this.height = player.height;
+	this.x = ((pCanvas.width/2)-(player.width/2));
+	this.y = ((pCanvas.height/2)-(player.height/2));
+	this.draw = function()
+	{
+		pContext.drawImage(player, this.x, this.y);
+	};
 }
 
 //updates elements on the canvas
@@ -109,6 +123,9 @@ function updateCanvas()
 	bulletUpdate();
 }
 
+/**
+*Updates the bullets tradgectory with the angle at firing
+*/
 function bulletUpdate()
 {
 	    console.log(bullets.length);
@@ -116,10 +133,20 @@ function bulletUpdate()
 	    var speed = 5.0;    
                  for(var i = 0; i < bullets.length; i++)
                  {      
-			bullets[i].y += -(speed * Math.cos(bullets[i].angle));
-			bullets[i].x += speed * Math.sin(bullets[i].angle);
- 
-                         bullets[i].draw();
+
+			if(bullets[i].x == "NULL")
+			{
+				bullets[i].x = canvas.width/2;
+				bullets[i].y = canvas.height/2;	
+			}else{
+				bullets[i].y += -(speed * Math.cos(bullets[i].angle));
+				bullets[i].x += speed * Math.sin(bullets[i].angle);
+ 			}
+
+                        bullets[i].draw();
+				
+			 //check if bullets are still in bounds. 
+			 //If no remove from array
                          if(bullets[i].x > 1000 || bullets[i].x < 0 || bullets[i].y > 500 || bullets[i].y < 0)
                          {       
                                  bullets.splice(i, 1);
@@ -161,24 +188,31 @@ function bulletObj(x, y)
 	this.x = x;
 	this.y = y;
 	this.angle = angle;
-	this.draw = function(){
+
+	this.draw = function()
+	{
 		context.drawImage(bullet, this.x, this.y);
+	};
+
+	this.onload = function()
+	{
+		context.drawImage(bullet, context.width/2, context.height/2);
 	};
 	//console.log(this.x);
 }
 
-//player fire
+/**on mouse click this will be called and set x and y null first time so 
+*can set position to start off from center then adds a bullet to array
+* of bullets
+*/
 function fire(ev)
 {
-	//gets and stores mouses x and y co ordinates
-	var x, y;
-	var pos = mouseLoc(ev)
-	x = pos[0];
-	y = pos[1];
+	
+	x = "NULL"; 
+	y = "NULL";
 
 	var bullet = new bulletObj(x, y);
 	bullets.push(bullet);
-	var numBullets = bullets.length;
 }
 
 function clear()
