@@ -25,7 +25,7 @@ function init()
 	//player.draw();
 	var player = new playerObj();
 
-	player.draw();
+	//player.draw();
 
 	updateCanvas();
 	var id = setInterval(updateCanvas, 1000/60); 
