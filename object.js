@@ -37,6 +37,7 @@ function mainMenu()
 
 function choiceHover(ev)
 {
+	mousePosDisplay(ev);
 	var x, y;
 	var pos = mouseLoc(ev);
 	x = pos[0];
@@ -48,15 +49,37 @@ function choiceHover(ev)
 	var originStart = new Image();
 	originStart.src = 'start.png';
 
-	var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width) && (y > 260) && (y < 260+start.height); 
+	var aboutStart = new Image();
+	aboutStart.src  = 'about.png';
+
+	var about = new Image();
+	about.src = 'aboutSelect.png';
+
+	var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width/2) && (y > 260) && (y < 260+start.height); 
+	var aboutBounding = (x > canvas.width/2-about.width/2) && (x < canvas.width/2+about.width/2) && (y > 300+startGame.height) && (y < (300+startGame.height)+about.height);
 //	console.log(startGameBounding);
 
+	//console.log(startGameBounding);
 	if(startGameBounding)
 	{
+		context.clearRect(canvas.width/2-start.width/2, 260, start.width, start.height);
 		context.drawImage(start, canvas.width/2-start.width/2, 260);
 	}else{
-                context.drawImage(originStart, canvas.width/2-start.width/2, 260);
+		context.clearRect(canvas.width/2-start.width/2, 260, originStart.width, originStart.height);
+                context.drawImage(originStart, canvas.width/2-originStart.width/2, 260);
 	}
+
+	//FIX THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
+	if(aboutBounding)
+	{
+		context.clearRect(canvas.width/2-about.width/2, 300+start.height, about.width, about.height)
+		context.drawImage(about, canvas.width/2-aboutStart/2, 300+startGame.height);
+	}else{
+                context.clearRect(canvas.width/2-aboutStart.width/2, 300+start.height, aboutStart.width, aboutStart.height)
+                context.drawImage(aboutStart, canvas.width/2-aboutStart/2, 300+start.height);
+
+	}
+
 }
 
 function choiceClick(ev)
@@ -368,7 +391,6 @@ function enemyObj(x , y)
 	this.borderX = "NULL";
 	this.borderY = "NULL"; 
 	this.angle = angleBetweenObjCenter(this.x, this.y);
-	this.Obj = this;
 
 	this.draw = function()
         {
@@ -484,7 +506,7 @@ function mousePosDisplay(ev)
 	x = pos[0];
 	y = pos[1];
 
-//	document.getElementById("mousePos").innerHTML = ("x=" + x +", y=" + y);
+	document.getElementById("mousePos").innerHTML = ("x=" + x +", y=" + y);
 
 }
 
