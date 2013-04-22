@@ -238,7 +238,7 @@ function rotate(ev)
 function playerObj()
 {
 	var player = new Image();
-	player.src = 'ball.png';
+	player.src = 'player.png';
 
 	this.health = 100;
 	this.score = 0;
