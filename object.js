@@ -11,30 +11,107 @@ var enemies = [];
 */
 function init()
 {
-	pContext.clearRect(0, 0, pCanvas.width, pCanvas.height);
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	mainMenu();
 
-	//var player = new playerObj();
+}
 
-	//player canvas positioning in center of game canvas
-	var canvasXCent = ((canvas.width/2)-(pCanvas.width/2));
-	var canvasYCent = ((canvas.height/2)-(pCanvas.height/2));
-	console.log(canvasYCent);
-	pCanvas.style.top = canvasYCent + "px";
-	pCanvas.style.left = canvasXCent + "px";
+function mainMenu()
+{
+	canvas.addEventListener('mousemove', choiceHover, false);
+	canvas.addEventListener('mousedown', choiceClick, false);	
 
-	//player.draw();
-	var player = new playerObj();
+	var title = new Image();
+	title.src = 'title3.png';
 
-	player.draw();
+	var startGame = new Image;
+	startGame.src = 'start.png';
 
-	updateCanvas();
-	var id = setInterval(updateCanvas, 1000/60); 
+	var about = new Image;
+	about.src = 'about.png'; 
 
-	updateEnemyAdd();
-	//rand interval between 1 30
-	var spawnTime = levelSpawnTime(player.level);
-	var time = Math.floor((Math.random()*(3000-spawnTime+1))+spawnTime);
-	var id2 = setInterval(updateEnemyAdd, time/1);
+	context.drawImage(title, canvas.width/2-title.width/2, 10, 600, 200);
+	context.drawImage(startGame, canvas.width/2-startGame.width/2, 260);
+	context.drawImage(about, canvas.width/2-about.width/2, 300+startGame.height);
+}
+
+function choiceHover(ev)
+{
+	var x, y;
+	var pos = mouseLoc(ev);
+	x = pos[0];
+	y = pos[1];
+
+	var start = new Image();
+	start.src = 'start.png';
+
+	var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width) && (y > 260) && (y < 260+start.height); 
+//	console.log(startGameBounding);
+
+	if(startGameBounding)
+	{
+		context.fillStyle='#FF0000';
+		context.fillRect(canvas.width/2-start.width/2, 260, start.width, start.height);
+		context.drawImage(start, canvas.width/2-start.width/2, 260);
+	}else{
+		context.fillStyle='#FFFFFF';
+                context.fillRect(canvas.width/2-start.width/2, 260, start.width, start.height);
+                context.drawImage(start, canvas.width/2-start.width/2, 260);
+	}
+}
+
+function choiceClick(ev)
+{
+        var x, y;
+        var pos = mouseLoc(ev);
+        x = pos[0];
+        y = pos[1];
+
+        var start = new Image();
+        start.src = 'start.png';
+
+        var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width) && (y > 260) && (y < 260+start.height);
+//      console.log(startGameBounding);
+
+        if(startGameBounding)
+        {
+		gameInit();
+        }
+
+}
+
+function gameInit()
+{
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	    //player canvas positioning in center of game canvas
+	//remove unused event listeners
+	canvas.removeEventListener('mousemove', choiceHover, false);
+        canvas.removeEventListener('mousedown', choiceClick, false);
+
+	myCanvas.addEventListener('mousemove', rotate, false);
+	myCanvas.addEventListener('mousedown', fire, false);
+	
+
+        var canvasXCent = ((canvas.width/2)-(pCanvas.width/2));
+        var canvasYCent = ((canvas.height/2)-(pCanvas.height/2));
+        console.log(canvasYCent);
+        pCanvas.style.top = canvasYCent + "px";
+        pCanvas.style.left = canvasXCent + "px";
+
+        //player.draw();
+        var player = new playerObj();
+
+        player.draw();
+
+        updateCanvas();
+        var id = setInterval(updateCanvas, 1000/60);
+
+        updateEnemyAdd();
+        //rand interval between 1 30
+        var spawnTime = levelSpawnTime(player.level);
+        var time = Math.floor((Math.random()*(3000-spawnTime+1))+spawnTime);
+        var id2 = setInterval(updateEnemyAdd, time/1);
+
 }
 
 function levelSpawnTime(level)
@@ -44,7 +121,7 @@ function levelSpawnTime(level)
 	switch(level)
 	{
 		case 1:
-			time = 500;
+			time = 5000;
 			break;				
 
 		case 2: 
@@ -100,6 +177,7 @@ function updateCanvas()
 {
 	clear();	
 	bulletHitZombie();	
+	zombieHitPHouse();
 
 	bulletUpdate();
 	
@@ -222,7 +300,7 @@ function fire(ev)
 function bulletObj(x, y)
 {
 	var bullet = new Image();
-	bullet.src = 'bullet.png';
+	bullet.src = 'bullet1.png';
 	//console.log(bullet.width);
 	this.bulletX = bullet.width; 
 	this.bulletY = bullet.height;
@@ -350,7 +428,7 @@ function bulletHitZombie()
 			var compXAxisLeft = (bullets[i].x <= (enemies[j].x + enemies[j].width) && bullets[i].x >= enemies[j].x);
 			var compYAxisUp = (bullets[i].y >= (enemies[j].y - enemies[j].height) && bullets[i].y <= enemies[j].y); 
 //			console.log("x " + enemies[j].x);
-			if(compXAxisRight && compYAxisDown || compXAxisLeft && compYAxisDown)
+			if(compXAxisRight && compYAxisDown && compXAxisLeft && compYAxisUp && compXAxisRight && compYAxisUp && compXAxisLeft && compYAxisDown)
 			{
 				enemies[j].health = enemies[j].health - 1;
 				console.log(enemies[j].health);
@@ -369,7 +447,14 @@ function bulletHitZombie()
 
 function zombieHitPHouse()
 {
-
+	var i;
+	for(i = 0; i < enemies.length; i++)
+	{
+		if((enemies[i].x <= (canvas.width/2+pCanvas.width/2) && (enemies[i].x >= (canvas.width/2-pCanvas.width)) && (enemies[i].y <= (canvas.height/2+pCanvas.height)) && (enemies[i].y >= (canvas.height/2-pCanvas.height/2))))
+		{
+			enemies.splice(i, 1);
+		} 
+	}
 }
 
 
