@@ -43,20 +43,19 @@ function choiceHover(ev)
 	y = pos[1];
 
 	var start = new Image();
-	start.src = 'start.png';
+	start.src = 'start1.png';
+
+	var originStart = new Image();
+	originStart.src = 'start.png';
 
 	var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width) && (y > 260) && (y < 260+start.height); 
 //	console.log(startGameBounding);
 
 	if(startGameBounding)
 	{
-		context.fillStyle='#FF0000';
-		context.fillRect(canvas.width/2-start.width/2, 260, start.width, start.height);
 		context.drawImage(start, canvas.width/2-start.width/2, 260);
 	}else{
-		context.fillStyle='#FFFFFF';
-                context.fillRect(canvas.width/2-start.width/2, 260, start.width, start.height);
-                context.drawImage(start, canvas.width/2-start.width/2, 260);
+                context.drawImage(originStart, canvas.width/2-start.width/2, 260);
 	}
 }
 
