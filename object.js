@@ -4,6 +4,9 @@ var angle;
 var previousAngle;
 var bullets = [];
 var enemies = [];
+var pScore = 0;
+var pHealth = 100;
+var pLevel = 1;
 
 /**
 *The function is called on load and set up everything,
@@ -20,6 +23,8 @@ function mainMenu()
 {
 	canvas.addEventListener('mousemove', choiceHover, false);
 	canvas.addEventListener('mousedown', choiceClick, false);	
+	
+	//document.remove element id
 
 	var title = new Image();
 	title.src = 'title3.png';
@@ -262,8 +267,8 @@ function playerObj()
 	var player = new Image();
 	player.src = 'player.png';
 
-	this.health = 100;
-	this.score = 0;
+	//this.health = 100;
+	//this.score = 0;
 	this.level = 1;
 
 	this.width = player.width;
@@ -326,6 +331,7 @@ function bulletObj(x, y)
 	//console.log(bullet.width);
 	this.bulletX = bullet.width; 
 	this.bulletY = bullet.height;
+	this.radius = this.bulletY/2;
 	this.x = x;
 	this.y = y;
 	this.angle = angle;
@@ -386,6 +392,7 @@ function enemyObj(x , y)
 
 	this.width = enemy.width;
 	this.height = enemy.height;
+	this.radius = this.height/2;
 	this.x = x;
 	this.y = y;
 	this.borderX = "NULL";
@@ -443,25 +450,27 @@ function bulletHitZombie()
 	{
 		for(i = 0; i < bullets.length; i++)
 		{
-			console.log("nme hp= " + enemies[j].health);			
-			var compXAxisRight = (bullets[i].x >= enemies[j].x) && (bullets[i].x <= (enemies[j].x + enemies[j].width));
-			var compYAxisDown = (bullets[i].y <= enemies[j].y) && (bullets[i].y >= (enemies[j].y - enemies[j].height));
-			var compXAxisLeft = (bullets[i].x <= (enemies[j].x + enemies[j].width) && bullets[i].x >= enemies[j].x);
-			var compYAxisUp = (bullets[i].y >= (enemies[j].y - enemies[j].height) && bullets[i].y <= enemies[j].y); 
-//			console.log("x " + enemies[j].x);
-			if(compXAxisRight && compYAxisDown && compXAxisLeft && compYAxisUp && compXAxisRight && compYAxisUp && compXAxisLeft && compYAxisDown)
-			{
-				enemies[j].health = enemies[j].health - 1;
-				console.log(enemies[j].health);
-				if(enemies[j].health == 0)
-				{
-					bullets.splice(i, 1);
-					enemies.splice(j, 1);
-					//skips checking the removed bullet against rest of enemies
-					i++;
-					j++;
-				}
-			} 
+
+			var dx = enemies[j].x - bullets[i].x;
+                        var dy = enemies[j].y - bullets[i].y;
+                        var dist = enemies[j].radius + bullets[i].radius;
+                        var collision = dx * dx + dy * dy <= dist * dist;
+                        if(collision)
+                        {
+                                enemies[j].health = enemies[j].health - 1;
+                                console.log(enemies[j].health);
+                                if(enemies[j].health == 0)
+                                {
+                                        bullets.splice(i, 1);
+                                        enemies.splice(j, 1);
+//					pScore = pScore + 10;
+//					console.log(pScore);					
+                                        //skips checking the removed bullet against rest of enemies
+                                       // i++;
+                                        //j++;
+                                }
+                        }
+
 		}
 	}
 }
@@ -473,7 +482,14 @@ function zombieHitPHouse()
 	{
 		if((enemies[i].x <= (canvas.width/2+pCanvas.width/2) && (enemies[i].x >= (canvas.width/2-pCanvas.width)) && (enemies[i].y <= (canvas.height/2+pCanvas.height)) && (enemies[i].y >= (canvas.height/2-pCanvas.height/2))))
 		{
+			pHealth--;
 			enemies.splice(i, 1);
+			
+			//check players health
+//			if()
+//			{
+
+//			}
 		} 
 	}
 }
