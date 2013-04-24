@@ -1,12 +1,14 @@
 //var context;
 //var x, y;
-var angle;
+var angle, enemiesMax;
 var previousAngle;
 var bullets = [];
 var enemies = [];
 var pScore = 0;
 var pHealth = 100;
-var pLevel = 1;
+var pLevel = 0;
+var id, id2;
+var enemiesSpeed = 0.3;
 
 /**
 *The function is called on load and set up everything,
@@ -21,8 +23,8 @@ function init()
 
 function mainMenu()
 {
-	canvas.addEventListener('mousemove', choiceHover, false);
-	canvas.addEventListener('mousedown', choiceClick, false);	
+//	canvas.addEventListener('mousemove', choiceHover, false);
+//	canvas.addEventListener('mousedown', choiceClick, false);	
 	
 	//document.remove element id
 
@@ -38,6 +40,9 @@ function mainMenu()
 	context.drawImage(title, canvas.width/2-title.width/2, 10, 600, 200);
 	context.drawImage(startGame, canvas.width/2-startGame.width/2, 260);
 	context.drawImage(about, canvas.width/2-about.width/2, 300+startGame.height);
+
+	canvas.addEventListener('mousemove', choiceHover, false);
+        canvas.addEventListener('mousedown', choiceClick, false);
 }
 
 function choiceHover(ev)
@@ -55,13 +60,13 @@ function choiceHover(ev)
 	originStart.src = 'start.png';
 
 	var aboutStart = new Image();
-	aboutStart.src  = 'about.png';
+	aboutStart.src = 'about.png';
 
 	var about = new Image();
 	about.src = 'aboutSelect.png';
 
 	var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width/2) && (y > 260) && (y < 260+start.height); 
-	var aboutBounding = (x > canvas.width/2-about.width/2) && (x < canvas.width/2+about.width/2) && (y > 300+startGame.height) && (y < (300+startGame.height)+about.height);
+	var aboutBounding = (x > canvas.width/2-about.width/2) && (x < canvas.width/2+about.width/2) && (y > 300+start.height) && (y < ((300+start.height)+about.height));
 //	console.log(startGameBounding);
 
 	//console.log(startGameBounding);
@@ -74,16 +79,17 @@ function choiceHover(ev)
                 context.drawImage(originStart, canvas.width/2-originStart.width/2, 260);
 	}
 
-	//FIX THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
-	if(aboutBounding)
-	{
-		context.clearRect(canvas.width/2-about.width/2, 300+start.height, about.width, about.height)
-		context.drawImage(about, canvas.width/2-aboutStart/2, 300+startGame.height);
-	}else{
-                context.clearRect(canvas.width/2-aboutStart.width/2, 300+start.height, aboutStart.width, aboutStart.height)
-                context.drawImage(aboutStart, canvas.width/2-aboutStart/2, 300+start.height);
-
-	}
+	var drawAboutX = canvas.width/2-about.width/2;
+	var drawAboutY = 300 + start.height; 
+		if(aboutBounding)
+		{
+			context.clearRect(canvas.width/2-about.width/2, 300+start.height, about.width, about.height);
+			context.drawImage(about, drawAboutX, drawAboutY);
+		}else{
+                	context.clearRect(((canvas.width/2)-(aboutStart.width/2)), (300+start.height), aboutStart.width, aboutStart.height);
+	                context.drawImage(aboutStart, drawAboutX, drawAboutY);
+		}
+	
 
 }
 
@@ -107,6 +113,7 @@ function choiceClick(ev)
 
 }
 
+//-------------------------------------Game methods
 function gameInit()
 {
 	context.clearRect(0, 0, canvas.width, canvas.height);
@@ -115,9 +122,8 @@ function gameInit()
 	canvas.removeEventListener('mousemove', choiceHover, false);
         canvas.removeEventListener('mousedown', choiceClick, false);
 
-	myCanvas.addEventListener('mousemove', rotate, false);
-	myCanvas.addEventListener('mousedown', fire, false);
-	
+	canvas.addEventListener('mousemove', rotate, false);
+	canvas.addEventListener('mousedown', fire, false);
 
         var canvasXCent = ((canvas.width/2)-(pCanvas.width/2));
         var canvasYCent = ((canvas.height/2)-(pCanvas.height/2));
@@ -125,22 +131,86 @@ function gameInit()
         pCanvas.style.top = canvasYCent + "px";
         pCanvas.style.left = canvasXCent + "px";
 
+	//sets up start level
+	pLevel = 1;
+
         //player.draw();
         var player = new playerObj();
 
         player.draw();
-
-        updateCanvas();
-        var id = setInterval(updateCanvas, 1000/60);
+	newLevel(pLevel);
+        
+	updateCanvas();
+        id = setInterval(updateCanvas, 1000/60);
 
         updateEnemyAdd();
         //rand interval between 1 30
-        var spawnTime = levelSpawnTime(player.level);
+	
+        var spawnTime = levelSpawnTime(pLevel);
         var time = Math.floor((Math.random()*(3000-spawnTime+1))+spawnTime);
-        var id2 = setInterval(updateEnemyAdd, time/1);
+        id2 = setInterval(updateEnemyAdd, time/1);
 
 }
 
+/**
+* Sets up spawn rates for enemies
+*/
+function newLevel(level)
+{
+//	enemiesMax = 0;
+
+	switch(level)
+	{
+		case 1:
+			enemiesMax = 20;
+			enemiesSpeed = 0.3;
+                        break;
+
+                case 2:
+                        enemiesMax = 25;
+                        enemiesSpeed = 0.4;
+			break;
+
+                case 3:
+                        enemiesMax = 25;
+                        enemiesSpeed = 0.5;
+			break;
+
+                case 4:
+			enemiesMax = 30;
+                        enemiesSpeed = 0.5;
+                        break;
+
+                case 5:
+			enemiesMax = 35;
+                        enemiesSpeed = 0.6;
+                        break;
+
+                case 6:
+			enemiesMax = 35;
+                        enemiesSpeed = 0.7;
+                        break;
+
+                case 7:
+			enemiesMax = 40;
+                        enemiesSpeed = 0.8;
+                        break;
+
+                case 8:
+			enemiesMax = 45;
+                        enemiesSpeed = 0.9;
+                        break;
+
+                case 9:
+			enemiesMax = 50;
+                        enemiesSpeed = 1;
+                        break;
+	}
+}
+
+/**
+* sets min time takes to add enemies
+*/
 function levelSpawnTime(level)
 {
 	var time; 
@@ -148,14 +218,45 @@ function levelSpawnTime(level)
 	switch(level)
 	{
 		case 1:
-			time = 5000;
+			time = 8000;
 			break;				
 
 		case 2: 
-			time = 400;
+			time = 7000;
 			break;
-	}
+		
+		case 3:
+			time = 6000;
+			break;
+		
+		case 4: 
+			time = 5000;
+			break;
+		
+		case 5:
+			time = 4000;
+			break;
+		
+		case 6:
+			time = 3000;
+			break;
+		
+		case 7:
+			time = 2000;
+			break;
+		
+		case 8:
+			time = 1000;
+			break;
+		
+		case 9:
+			time = 500;
+			break;
 
+		case 10:
+			//kill screen
+	
+	}
 	return time;
 }
 
@@ -169,32 +270,35 @@ function updateEnemyAdd()
 	var XorY = Math.random();
 	var side = Math.random();
 	var x, y;
-
-	if(XorY >0.5)
+	
+	while(enemiesMax > 0)
 	{
-		if(side > 0.5)
+		if(XorY >0.5)
 		{
-			x = 0 ;
-			y = Math.floor((Math.random()*(canvas.height))+1);
+			if(side > 0.5)
+			{
+				x = 0 ;
+				y = Math.floor((Math.random()*(canvas.height))+1);
+			}else{
+				x = canvas.width;
+				y = Math.floor((Math.random()*(canvas.height))+1);
+			}
 		}else{
-			x = canvas.width;
-			y = Math.floor((Math.random()*(canvas.height))+1);
+			if(side > 0.5)
+			{
+				y = 0;
+				x = Math.floor((Math.random()*(canvas.width))+1);
+			}else{
+				y = canvas.height;
+				x = Math.floor((Math.random()*(canvas.width))+1);;
+			}
 		}
-	}else{
-		if(side > 0.5)
-		{
-			y = 0;
-			x = Math.floor((Math.random()*(canvas.width))+1);
-		}else{
-			y = canvas.height;
-			x = Math.floor((Math.random()*(canvas.width))+1);;
-		}
+	
+		console.log(y);	
+		var enemy = new enemyObj(x, y);	
+	
+		enemies.push(enemy);
 	}
-
-	console.log(y);	
-	var enemy = new enemyObj(x, y);	
-
-	enemies.push(enemy);
 }
 
 /**
@@ -204,6 +308,9 @@ function updateCanvas()
 {
 	clear();	
 	bulletHitZombie();	
+
+	drawGui();	
+
 	zombieHitPHouse();
 
 	bulletUpdate();
@@ -213,7 +320,14 @@ function updateCanvas()
 	enemyUpdate();
 }
 
-
+function drawGui()
+{
+	context.lineWidth=1;
+	context.fillStyle="#cof";
+	context.lineStyle="#ff0";
+	context.font="18px sans-serif";
+	context.fillText("Score: " + pScore + "  HP: " + pHealth + " Level: " + pLevel + "  Enemies remaining: " + enemiesMax, 50, 30);
+}
 
 /**
  * The function below gets the angle between the player and mouse and then 
@@ -387,12 +501,13 @@ function enemyObj(x , y)
 	var enemy = new Image();
 	enemy.src = 'enemy3.png';
 
-	this.speed = 0.3;
+	this.speed = enemiesSpeed;
 	this.health = 3;
+	this.damage = 2;
 
 	this.width = enemy.width;
 	this.height = enemy.height;
-	this.radius = this.height/2;
+	this.radius = this.height;
 	this.x = x;
 	this.y = y;
 	this.borderX = "NULL";
@@ -463,8 +578,15 @@ function bulletHitZombie()
                                 {
                                         bullets.splice(i, 1);
                                         enemies.splice(j, 1);
-//					pScore = pScore + 10;
-//					console.log(pScore);					
+					pScore = pScore + 10;
+					enemiesMax--;
+					console.log(pScore);	
+					if(enemies.length == 0)
+					{
+						pLevel++;
+						levelSpawnTime(pLevel);
+						newLevel(pLevel);
+					}				
                                         //skips checking the removed bullet against rest of enemies
                                        // i++;
                                         //j++;
@@ -480,22 +602,50 @@ function zombieHitPHouse()
 	var i;
 	for(i = 0; i < enemies.length; i++)
 	{
-		if((enemies[i].x <= (canvas.width/2+pCanvas.width/2) && (enemies[i].x >= (canvas.width/2-pCanvas.width)) && (enemies[i].y <= (canvas.height/2+pCanvas.height)) && (enemies[i].y >= (canvas.height/2-pCanvas.height/2))))
+		if(enemies[i].x <= (canvas.width/2+pCanvas.width/2) && ((enemies[i].x+enemies[i].width) >= (canvas.width/2-pCanvas.width/2)) && (enemies[i].y <= (canvas.height/2+pCanvas.height/2)) && (enemies[i].y >= ((canvas.height/2-pCanvas.height/2)-enemies[i].height)))
 		{
-			pHealth--;
+			pHealth = pHealth - enemies[i].damage;
 			enemies.splice(i, 1);
+			enemiesMax--;
 			
 			//check players health
-//			if()
-//			{
+			if(pHealth <= 0)
+			{
+					
+				clearInterval(id);
+				clearInterval(id2);
+				canvas.removeEventListener('mousemove', rotate, false);
+				canvas.removeEventListener('mousedown', fire, false);				
+			
+				context.clearRect(0, 0, canvas.width, canvas.height);
 
-//			}
+//				canvas.width = canvas.width;
+	
+				context.lineWidth=1;
+				context.fillStyle="#cof";
+				context.lineStyle="#ff0";
+				context.font="30px sans-serif";
+				context.fillText("GAME OVER!", 500, 250);
+				reset();
+			}
 		} 
 	}
 }
 
 
+
+
 //----------------------------------handy functions-----------------------------------------
+/**
+* resets all data
+*/
+function reset()
+{
+	pHealth = 100;
+	pScore = 0;
+	pLevel = 1;
+}
+
 
 /**
 *gets angle between mouse and player and sets the global angle so can 
