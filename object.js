@@ -1,6 +1,6 @@
 //var context;
 //var x, y;
-var angle, enemiesMax;
+var angle, enemiesMax, arrayTotal;
 var previousAngle;
 var bullets = [];
 var enemies = [];
@@ -113,7 +113,7 @@ function choiceClick(ev)
 
 }
 
-//-------------------------------------Game methods
+//-------------------------------------Game methods---------------------------------------------------------//
 function gameInit()
 {
 	context.clearRect(0, 0, canvas.width, canvas.height);
@@ -136,10 +136,11 @@ function gameInit()
 
         //player.draw();
         var player = new playerObj();
-
         player.draw();
+
 	newLevel(pLevel);
-        
+	arrayTotal = enemiesMax;        
+
 	updateCanvas();
         id = setInterval(updateCanvas, 1000/60);
 
@@ -159,53 +160,9 @@ function newLevel(level)
 {
 //	enemiesMax = 0;
 
-	switch(level)
-	{
-		case 1:
-			enemiesMax = 20;
-			enemiesSpeed = 0.3;
-                        break;
-
-                case 2:
-                        enemiesMax = 25;
-                        enemiesSpeed = 0.4;
-			break;
-
-                case 3:
-                        enemiesMax = 25;
-                        enemiesSpeed = 0.5;
-			break;
-
-                case 4:
-			enemiesMax = 30;
-                        enemiesSpeed = 0.5;
-                        break;
-
-                case 5:
-			enemiesMax = 35;
-                        enemiesSpeed = 0.6;
-                        break;
-
-                case 6:
-			enemiesMax = 35;
-                        enemiesSpeed = 0.7;
-                        break;
-
-                case 7:
-			enemiesMax = 40;
-                        enemiesSpeed = 0.8;
-                        break;
-
-                case 8:
-			enemiesMax = 45;
-                        enemiesSpeed = 0.9;
-                        break;
-
-                case 9:
-			enemiesMax = 50;
-                        enemiesSpeed = 1;
-                        break;
-	}
+	enemiesMax = level * 5;
+	enemiesSpeed = level * 0.3;
+	
 }
 
 /**
@@ -218,7 +175,7 @@ function levelSpawnTime(level)
 	switch(level)
 	{
 		case 1:
-			time = 8000;
+			time = 100;
 			break;				
 
 		case 2: 
@@ -261,7 +218,7 @@ function levelSpawnTime(level)
 }
 
 /**
-*adds enemys to array with a random start position
+*adds enemys to array with a random start position until enemie maximum is reached for that level
 */
 function updateEnemyAdd()
 {
@@ -270,9 +227,9 @@ function updateEnemyAdd()
 	var XorY = Math.random();
 	var side = Math.random();
 	var x, y;
-	
-	while(enemiesMax > 0)
-	{
+
+	if(arrayTotal > 0)
+	{	
 		if(XorY >0.5)
 		{
 			if(side > 0.5)
@@ -298,6 +255,7 @@ function updateEnemyAdd()
 		var enemy = new enemyObj(x, y);	
 	
 		enemies.push(enemy);
+		arrayTotal--;
 	}
 }
 
@@ -581,11 +539,13 @@ function bulletHitZombie()
 					pScore = pScore + 10;
 					enemiesMax--;
 					console.log(pScore);	
-					if(enemies.length == 0)
+					if(enemiesMax == 0)
 					{
 						pLevel++;
 						levelSpawnTime(pLevel);
 						newLevel(pLevel);
+						arrayTotal = enemiesMax;
+						console.log(arrayMax);
 					}				
                                         //skips checking the removed bullet against rest of enemies
                                        // i++;
