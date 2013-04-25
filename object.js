@@ -5,7 +5,7 @@ var previousAngle;
 var bullets = [];
 var enemies = [];
 var pScore = 0;
-var pHealth = 2;
+var pHealth = 50;
 var pLevel = 0;
 var id, id2;
 var enemiesSpeed = 0.3;
@@ -550,7 +550,7 @@ function zombieHitPHouse()
 			pHealth = pHealth - enemies[i].damage;
 			enemies.splice(i, 1);
 			enemiesMax--;
-		
+			pScore = pScore - 5;	
 			if(enemiesMax == 0)
 			{
 			    pLevel++;
