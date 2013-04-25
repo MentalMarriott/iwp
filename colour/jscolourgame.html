@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>JavaScript colourclickygameything </title>
+	</head>
+	<body onLoad="start_game()">
+
+	<h2>When something appears, click on it!</h2>
+
+	<canvas id="canvas1" width="200" height="200" style="border:1px dotted"></canvas>
+
+<p id="p1">
+<!--This is an "empty" paragraph, which we can fill using JavaScript and a call to document.getElementById('p1') -->
+</p> 
+
+
+<script>
+var x;
+var time_now;
+var tempdate;
+var time_then;
+var reaction_time;
+var x_loc=100;
+var y_loc=100;
+var radius=20;
+var delay=50;
+var mycanv=document.getElementById("canvas1");
+var ctx=mycanv.getContext("2d");
+
+function start_game() {
+	// get the date and time now 
+	tempdate=new Date();
+	// store the time the button will show 
+	time_then=tempdate.getTime() + delay;
+
+	delay=Math.floor(Math.random()*2000);
+	// set our button to show "delay" ms in the future
+	x=setInterval("draw_something_on_canvas()",delay);
+        mycanv.addEventListener("click",seenaclick,false);
+
+}
+
+function stop_game() {
+	// Get the time now
+	tempdate=new Date();
+	time_now=tempdate.getTime() ;
+	
+	// And work out the reaction time
+	reaction_time=time_now-time_then;
+	
+	// Finally output the results.
+	document.getElementById('p1').innerHTML='You took '+reaction_time+' milliseconds';
+        clearInterval(x);
+}
+
+
+function draw_something_on_canvas() {
+        // A red circle
+        ctx.fillStyle="#f00";
+        ctx.beginPath();
+        ctx.arc(x_loc-40,y_loc,radius,0,Math.PI*2,false);
+        ctx.fill();
+        ctx.closePath();
+
+        // A green circle
+        ctx.fillStyle="#0f0";
+        ctx.beginPath();
+        ctx.arc(x_loc,y_loc,radius,0,Math.PI*2,false);
+        ctx.fill();
+        ctx.closePath();
+        
+        // A blue circle
+        ctx.fillStyle="#00f";
+        ctx.beginPath();
+        ctx.arc(x_loc+40,y_loc,radius,0,Math.PI*2,false);
+        ctx.fill();
+        ctx.closePath();
+}
+
+function seenaclick(e) {
+	if (hitpaint(e)) {
+		stop_game();
+	} 
+}
+
+function hitpaint(mouse_event) {
+	// This function determines whether a mouse click
+	// is on a painted part of the canvas
+
+
+	// Find the bounding rectangle of the canvas
+	var bounding_box=mycanv.getBoundingClientRect();
+
+	// Get the mousex and mousey location on the canvas
+	// from the mouse_event 
+	// and the canvas bounding rectangle
+        var mousex=(mouse_event.clientX-bounding_box.left) *
+                             (mycanv.width/bounding_box.width);	
+        var mousey=(mouse_event.clientY-bounding_box.top) *
+				(mycanv.height/bounding_box.height);	
+        var pixels=ctx.getImageData(mousex,mousey,1,1);
+
+	// It's possible that there is more than one pixel at this
+	// location (if the monitor is high-res, one "canvas pixel" 
+	// might correspond to more than one "image pixel") so we need
+	// to use a loop to test whether any of the pixels has an
+	// alpha value greater than 0
+
+	// With pixel data...
+	// 0 is red, 1 is green, 2 is blue, 3 is alpha 
+	// So we need to check data[3] and every fourth element in 
+	// data after that.
+	
+
+	for (var i=3; i<pixels.data.length; i+=4) {
+		// If we find a non-zero alpha we can just stop and return
+		// "true" - the click was on a part of the canvas that's
+		// got colour on it.
+            if ( pixels.data[i]!==0 ) return true;
+	}
+
+
+	// The function will only get here if none of the pixels matched in 
+	// the loop above, so we know that the mouse click wasn't on a painted
+	// part of the canvas
+        return false;
+
+}
+
+</script>
+</body>
+</html>

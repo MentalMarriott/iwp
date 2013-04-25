@@ -5,10 +5,27 @@ var previousAngle;
 var bullets = [];
 var enemies = [];
 var pScore = 0;
-var pHealth = 100;
+var pHealth = 2;
 var pLevel = 0;
 var id, id2;
 var enemiesSpeed = 0.3;
+var killHundred, curious, pacifist, over9000;
+
+var title = new Image();
+title.src = 'title3.png';
+
+var start = new Image();
+start.src = 'start1.png';
+
+var originStart = new Image();
+originStart.src = 'start.png';
+
+var aboutStart = new Image();
+aboutStart.src = 'about.png';
+
+var about = new Image();
+about.src = 'aboutSelect.png';
+
 
 /**
 *The function is called on load and set up everything,
@@ -23,23 +40,9 @@ function init()
 
 function mainMenu()
 {
-//	canvas.addEventListener('mousemove', choiceHover, false);
-//	canvas.addEventListener('mousedown', choiceClick, false);	
-	
-	//document.remove element id
-
-	var title = new Image();
-	title.src = 'title3.png';
-
-	var startGame = new Image;
-	startGame.src = 'start.png';
-
-	var about = new Image;
-	about.src = 'about.png'; 
-
 	context.drawImage(title, canvas.width/2-title.width/2, 10, 600, 200);
-	context.drawImage(startGame, canvas.width/2-startGame.width/2, 260);
-	context.drawImage(about, canvas.width/2-about.width/2, 300+startGame.height);
+	context.drawImage(originStart, canvas.width/2-originStart.width/2, 260);
+	context.drawImage(about, canvas.width/2-about.width/2, 300+originStart.height);
 
 	canvas.addEventListener('mousemove', choiceHover, false);
         canvas.addEventListener('mousedown', choiceClick, false);
@@ -52,18 +55,6 @@ function choiceHover(ev)
 	var pos = mouseLoc(ev);
 	x = pos[0];
 	y = pos[1];
-
-	var start = new Image();
-	start.src = 'start1.png';
-
-	var originStart = new Image();
-	originStart.src = 'start.png';
-
-	var aboutStart = new Image();
-	aboutStart.src = 'about.png';
-
-	var about = new Image();
-	about.src = 'aboutSelect.png';
 
 	var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width/2) && (y > 260) && (y < 260+start.height); 
 	var aboutBounding = (x > canvas.width/2-about.width/2) && (x < canvas.width/2+about.width/2) && (y > 300+start.height) && (y < ((300+start.height)+about.height));
@@ -102,14 +93,19 @@ function choiceClick(ev)
 
         var start = new Image();
         start.src = 'start.png';
+	
+	var star
 
         var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width) && (y > 260) && (y < 260+start.height);
 //      console.log(startGameBounding);
+	//var aboutBounding = (x > canvas.width/2-
 
         if(startGameBounding)
         {
 		gameInit();
         }
+
+	//if(
 
 }
 
@@ -130,6 +126,7 @@ function gameInit()
         console.log(canvasYCent);
         pCanvas.style.top = canvasYCent + "px";
         pCanvas.style.left = canvasXCent + "px";
+	pCanvas.style.border = "dashed";
 
 	//sets up start level
 	pLevel = 1;
@@ -161,7 +158,7 @@ function newLevel(level)
 //	enemiesMax = 0;
 
 	enemiesMax = level * 5;
-	enemiesSpeed = level * 0.3;
+	enemiesSpeed = level * 1;
 	
 }
 
@@ -269,13 +266,15 @@ function updateCanvas()
 
 	drawGui();	
 
-	zombieHitPHouse();
+//	zombieHitPHouse();
 
 	bulletUpdate();
 	
 	//bulletHitZombie();
 
 	enemyUpdate();
+
+	zombieHitPHouse();
 }
 
 function drawGui()
@@ -341,7 +340,7 @@ function playerObj()
 
 	//this.health = 100;
 	//this.score = 0;
-	this.level = 1;
+	//this.level = 1;
 
 	this.width = player.width;
 	this.height = player.height;
@@ -545,7 +544,6 @@ function bulletHitZombie()
 						levelSpawnTime(pLevel);
 						newLevel(pLevel);
 						arrayTotal = enemiesMax;
-						console.log(arrayMax);
 					}				
                                         //skips checking the removed bullet against rest of enemies
                                        // i++;
@@ -567,29 +565,60 @@ function zombieHitPHouse()
 			pHealth = pHealth - enemies[i].damage;
 			enemies.splice(i, 1);
 			enemiesMax--;
-			
+		
+			if(enemiesMax == 0)
+			{
+			    pLevel++;
+			    levelSpawnTime(pLevel);
+			    newLevel(pLevel);
+			    arrayTotal = enemiesMax;
+			    console.log(arrayMax);
+			}
+
 			//check players health
 			if(pHealth <= 0)
 			{
-					
+				//console.log(canvas);
+				//console.log(context);
 				clearInterval(id);
 				clearInterval(id2);
 				canvas.removeEventListener('mousemove', rotate, false);
 				canvas.removeEventListener('mousedown', fire, false);				
-			
-				context.clearRect(0, 0, canvas.width, canvas.height);
+				console.log(canvas);
+				console.log(context);
 
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				pContext.clearRect(0, 0, pCanvas.width, pCanvas.height);
+				pCanvas.style.border = "none"; 
 //				canvas.width = canvas.width;
 	
 				context.lineWidth=1;
 				context.fillStyle="#cof";
 				context.lineStyle="#ff0";
 				context.font="30px sans-serif";
-				context.fillText("GAME OVER!", 500, 250);
+				context.fillText("GAME OVER!", 400, 250);
+				context.fillText("Press Enter to go to main menu", 400, 300);
+				context.fillText("You scored: " + pScore, 400, 350);
 				reset();
+				
+				document.onkeypress = enterPressed;
+
+				//window.addEventListener('onkeypress', continueGame, false);
+				//init();
 			}
 		} 
 	}
+}
+
+function enterPressed(evn) 
+{
+	if (window.event && window.event.keyCode == 13) 
+	{
+		init();	
+	}else if (evn && evn.keyCode == 13) 
+	      {
+    		init();
+  	      }
 }
 
 
@@ -601,9 +630,11 @@ function zombieHitPHouse()
 */
 function reset()
 {
-	pHealth = 100;
+	pHealth = 50;
 	pScore = 0;
 	pLevel = 1;
+	enemies = [];
+	bullets = [];
 }
 
 
@@ -643,3 +674,16 @@ function clear()
 	context.clearRect(0, 0, 1000, 1000);
 }
 
+
+//------------------------------Achievements--------------------------------\\
+
+/**
+ *
+ */
+function achieve()
+{
+
+
+
+
+}

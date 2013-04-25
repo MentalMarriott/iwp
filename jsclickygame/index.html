@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>JavaScript clicky game</title>
+	</head>
+	<body onLoad="start_game()">
+
+	<h2>When the button appears, click on it!</h2>
+
+<!--This is an "empty" paragraph, which we can fill using JavaScript and a call to document.getElementById('p1') -->
+<p id="p1"></p> 
+
+
+<script>
+var time_now;
+var tempdate;
+var time_then;
+var reaction_time;
+var x;
+var delay=0;
+
+function start_game() {
+	// get the date and time now 
+	tempdate=new Date();
+
+	delay = Math.random() * 2000;
+
+	// store the time the button will show 
+	time_then=tempdate.getTime() + delay;
+
+	// set our button to show "delay" ms in the future
+	x=setTimeout("show_button()",delay);
+}
+
+function stop_game() {
+	// Fill in some blanks here
+	// You should find out what time the button was clicked
+
+	// And you should work out what reaction_time 
+	// should be
+	reaction_time=0;
+	document.getElementById('p1').innerHTML='You took '+reaction_time+' milliseconds';
+}
+
+function result()
+{
+	time_now = new Date();
+	reaction_time = time_now -  tempdate;
+	document.getElementById('p1').innerHTML='You took '+reaction_time+' milliseconds';
+}
+
+function show_button() {
+	document.getElementById('p1').innerHTML='<input type="button" value="Click me!" id="blahblah" onClick="result();">';
+}
+
+</script>
+</body>
+</html>

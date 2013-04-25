@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>The National Robbery Simulator</title>
+	</head>
+	<body> 
+
+	<p>Type in your chosen lottery numbers below!</p>
+<p><input type="text" id="firstball">
+<input type="text" id="secondball">
+<input type="text" id="thirdball">
+<input type="text" id="fourthball">
+<input type="text" id="fifthball">
+<input type="text" id="sixthball"> </p>
+
+<p>Lottery balls will appear here:</p>
+<p><input type="text" id="firstballresult">
+<input type="text" id="secondballresult">
+<input type="text" id="thirdballresult">
+<input type="text" id="fourthballresult">
+<input type="text" id="fifthballresult">
+<input type="text" id="sixthballresult">
+<input type="text" id="bonusballresult"></p>
+
+<input type="button" id="playbutton" value="play" onClick="play_lottery()">
+<p id = "output"></p>
+<script>
+var balls=new Array();
+var balls_matched=0;
+var winnings='sod all';
+function play_lottery()
+{
+	//wouldn't it be cool if you could set it to play, like, 100 times?
+	for (i=0;i<7;i++)
+	{
+		balls[i]=pick_ball();
+	}
+	check_winnings();
+	show_output();
+}
+
+function pick_ball() 
+{
+	//Really need to check for repeated balls, you could get
+	//all the balls turning out to be the same with this one!
+	var ball=Math.floor(Math.random()*49)+1;
+	return ball;
+}
+
+function check_winnings() {
+	var inballs=new Array();
+	// actually it would be great if we could check that the
+	// user didn't put in the same ball more than once, oops.
+
+	//oh yeah we should also check it's not more than 49 or less than 1
+	inballs[0]=document.getElementById('firstball').value;
+	inballs[1]=document.getElementById('secondball').value;
+	inballs[2]=document.getElementById('thirdball').value;
+	inballs[3]=document.getElementById('fourthball').value;
+	inballs[4]=document.getElementById('fifthball').value;
+	inballs[5]=document.getElementById('sixthball').value;
+	for (i=0;i<6;i++) {
+		for (j=0;j<6;j++) {
+			if (inballs[i]==balls[j]) {
+				//woop we have a match!
+				balls_matched++; 
+			}
+			// oh wait, what about the bonus?
+			// should we check it here?
+
+		}
+	}
+	if (balls_matched>2) {
+		winnings="10 quid";
+		if (balls_matched>3) {
+			winnings="62 quid";
+			if (balls_matched>4) {
+				winnings="1500 quid";
+				if (balls_matched>5) {
+					winnings="2000000 quid";
+				} 
+				// on second thoughts,  
+				// maybe we should check the bonus ball
+				// here ??!?
+			}
+		}
+	}
+	// on second thoughts, maybe that massive nested if would
+	// have been more elegant as a switch statement...
+}
+
+function show_output() {
+	document.getElementById('firstballresult').value=balls[0];
+	document.getElementById('secondballresult').value=balls[1];
+	document.getElementById('thirdballresult').value=balls[2];
+	document.getElementById('fourthballresult').value=balls[3];
+	document.getElementById('fifthballresult').value=balls[4];
+	document.getElementById('sixthballresult').value=balls[5];
+	document.getElementById('bonusballresult').value=balls[6];
+	var outputstring="You matched " +balls_matched+" balls. You won "+winnings+" this time";
+	// O Noes!
+	// Really need to fix it so balls_matched doesn't keep going 
+	// up with each play
+
+	document.getElementById('output').innerHTML=outputstring;
+	//It'd also be good if we had outputs saying money spent on tickets
+	//versus money won 
+	//Various other statistics would also be interesting
+	//Average plays between wins?
+	//Number of times each ball comes up?
+}
+
+</script>
+</body>
+</html>
