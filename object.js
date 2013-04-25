@@ -5,7 +5,7 @@ var previousAngle;
 var bullets = [];
 var enemies = [];
 var pScore = 0;
-var pHealth = 2;
+var pHealth = 50;
 var pLevel = 0;
 var id, id2;
 var enemiesSpeed = 0.3;
@@ -321,7 +321,7 @@ function rotate(ev)
 function playerObj()
 {
 	var player = new Image();
-	player.src = 'player.png';
+	player.src = 'player1.png';
 
 	//this.health = 100;
 	//this.score = 0;
