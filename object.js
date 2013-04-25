@@ -1,6 +1,6 @@
 //var context;
 //var x, y;
-var angle, enemiesMax, arrayTotal;
+var angle, enemiesMax, arrayTotal, time;
 var previousAngle;
 var bullets = [];
 var enemies = [];
@@ -43,6 +43,7 @@ function mainMenu()
 	context.drawImage(title, canvas.width/2-title.width/2, 10, 600, 200);
 	context.drawImage(originStart, canvas.width/2-originStart.width/2, 260);
 	context.drawImage(about, canvas.width/2-about.width/2, 300+originStart.height);
+	pCanvas.style.border = "none";
 
 	canvas.addEventListener('mousemove', choiceHover, false);
         canvas.addEventListener('mousedown', choiceClick, false);
@@ -98,15 +99,38 @@ function choiceClick(ev)
 
         var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width) && (y > 260) && (y < 260+start.height);
 //      console.log(startGameBounding);
-	//var aboutBounding = (x > canvas.width/2-
+	var aboutBounding = (x > canvas.width/2-about.width/2) && ( x < canvas.width/2+about.width) && (y > 300+originStart.height) && (y < (300+originStart.height)+about.height);
 
         if(startGameBounding)
         {
 		gameInit();
         }
 
-	//if(
+	if(aboutBounding)
+	{
+		aboutPage();
+	}
+}
 
+function aboutPage()
+{
+	canvas.removeEventListener('mousemove', choiceHover, false);
+        canvas.removeEventListener('mousedown', choiceClick, false);
+
+	context.clearRect(0, 0, canvas.width, canvas.height);
+
+	context.lineWidth=1;
+        context.fillStyle="#cof";
+        context.lineStyle="#ff0";
+        context.font="18px sans-serif";
+        context.fillText("ATTACK OF THE ZOMBLES!", 300, 100);
+	context.fillText("Rules:", 300, 200);
+	context.fillText("Point mouse at the zombies as they come for your home.", 300, 275);
+	context.fillText("When they are in sight click your mouse and destroy them.", 300, 300);
+	context.fillText("If they get to close they might break down your fences and get you!", 300, 325);
+	context.fillText("Press enter to return to menu", 300, 375);
+
+	document.onkeypress = enterPressed;
 }
 
 //-------------------------------------Game methods---------------------------------------------------------//
@@ -145,7 +169,7 @@ function gameInit()
         //rand interval between 1 30
 	
         var spawnTime = levelSpawnTime(pLevel);
-        var time = Math.floor((Math.random()*(3000-spawnTime+1))+spawnTime);
+        time = Math.floor((Math.random()*(3000-spawnTime+1))+spawnTime);
         id2 = setInterval(updateEnemyAdd, time/1);
 
 }
@@ -168,49 +192,7 @@ function newLevel(level)
 function levelSpawnTime(level)
 {
 	var time; 
-
-	switch(level)
-	{
-		case 1:
-			time = 100;
-			break;				
-
-		case 2: 
-			time = 7000;
-			break;
-		
-		case 3:
-			time = 6000;
-			break;
-		
-		case 4: 
-			time = 5000;
-			break;
-		
-		case 5:
-			time = 4000;
-			break;
-		
-		case 6:
-			time = 3000;
-			break;
-		
-		case 7:
-			time = 2000;
-			break;
-		
-		case 8:
-			time = 1000;
-			break;
-		
-		case 9:
-			time = 500;
-			break;
-
-		case 10:
-			//kill screen
-	
-	}
+	time = 8 / level; 
 	return time;
 }
 
@@ -261,7 +243,10 @@ function updateEnemyAdd()
 */
 function updateCanvas()
 {
-	clear();	
+	clear();
+
+	document.onkeypress = pPressed;	
+	
 	bulletHitZombie();	
 
 	drawGui();	
@@ -610,21 +595,88 @@ function zombieHitPHouse()
 	}
 }
 
-function enterPressed(evn) 
+/**
+* Returns to main menu on enter pressed
+*/
+function enterPressed(e) 
 {
+
 	if (window.event && window.event.keyCode == 13) 
 	{
 		init();	
-	}else if (evn && evn.keyCode == 13) 
+	}else if (e && e.keyCode == 13) 
 	      {
     		init();
   	      }
 }
 
+function pPressed(e)
+{
+	console.log(e.keyCode);
+	if (window.event && window.event.keyCode == 112)
+        {
+                pause();
+        }else if (e && e.keyCode == 112)
+              {
+                pause();
+              }
 
+   	document.onkeypress = resume
+
+}
+
+/**
+* Pauses the game and waits to be unpaused
+*/
+function pause()
+{
+	      clearInterval(id);
+              clearInterval(id2);
+              canvas.removeEventListener('mousemove', rotate, false);
+              canvas.removeEventListener('mousedown', fire, false);
+
+	      context.clearRect(0, 0, canvas.width, canvas.height);
+	      pContext.clearRect(0, 0, pCanvas.width, pCanvas.height);
+	      pCanvas.style.border = "none";
+
+	      context.save();
+              context.lineWidth=1;
+              context.fillStyle="#cof";
+              context.lineStyle="#ff0";
+              context.font="30px sans-serif";
+              context.fillText("GAME PAUSED!", 300, 250);
+              context.fillText("Press P to return to game", 300, 300);
+
+	      document.onkeypress = resume;
+}
+
+/**
+* Resumes the game where it left off
+*/
+function resume(e)
+{
+	console.log("cake");
+	if (window.event && window.event.keyCode == 112)
+        {
+                context.restore();
+		id = setInterval(updateCanvas, 1000/60);
+                id2 = setInterval(updateEnemyAdd, time/1);
+                canvas.addEventListener('mousemove', rotate, false);
+                canvas.addEventListener('mousedown', fire, false);
+		pCanvas.style.border = "dashed";
+        }else if (e && e.keyCode == 112)
+              {
+              }
+
+
+}
 
 
 //----------------------------------handy functions-----------------------------------------
+
+
+
+
 /**
 * resets all data
 */
