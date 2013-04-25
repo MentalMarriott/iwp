@@ -550,7 +550,7 @@ function zombieHitPHouse()
 			pHealth = pHealth - enemies[i].damage;
 			enemies.splice(i, 1);
 			enemiesMax--;
-		
+			pScore = pScore - 5;	
 			if(enemiesMax == 0)
 			{
 			    pLevel++;
