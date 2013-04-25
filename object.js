@@ -34,6 +34,7 @@ about.src = 'aboutSelect.png';
 function init()
 {
 	context.clearRect(0, 0, canvas.width, canvas.height);
+	console.log(enemies.length);
 	mainMenu();
 
 }
@@ -147,7 +148,6 @@ function gameInit()
 
         var canvasXCent = ((canvas.width/2)-(pCanvas.width/2));
         var canvasYCent = ((canvas.height/2)-(pCanvas.height/2));
-        console.log(canvasYCent);
         pCanvas.style.top = canvasYCent + "px";
         pCanvas.style.left = canvasXCent + "px";
 	pCanvas.style.border = "dashed";
@@ -179,11 +179,8 @@ function gameInit()
 */
 function newLevel(level)
 {
-//	enemiesMax = 0;
-
 	enemiesMax = level * 5;
 	enemiesSpeed = level * 1;
-	
 }
 
 /**
@@ -192,7 +189,7 @@ function newLevel(level)
 function levelSpawnTime(level)
 {
 	var time; 
-	time = 8 / level; 
+	time = 14 / level; 
 	return time;
 }
 
@@ -202,7 +199,6 @@ function levelSpawnTime(level)
 function updateEnemyAdd()
 {
 	//start enemy offscreen
-	//var enemy = new enemyObj(-20, -20);
 	var XorY = Math.random();
 	var side = Math.random();
 	var x, y;
@@ -229,10 +225,7 @@ function updateEnemyAdd()
 				x = Math.floor((Math.random()*(canvas.width))+1);;
 			}
 		}
-	
-		console.log(y);	
 		var enemy = new enemyObj(x, y);	
-	
 		enemies.push(enemy);
 		arrayTotal--;
 	}
@@ -411,8 +404,6 @@ function bulletObj(x, y)
 */
 function bulletUpdate()
 {
-	    console.log(bullets.length);
-
 	    var speed = 5.0;    
             for(var i = 0; i < bullets.length; i++)
             {      
@@ -483,14 +474,7 @@ function enemyUpdate()
                 enemies[i].y += enemies[i].speed * Math.cos(enemies[i].angle);
                 enemies[i].x += -(enemies[i].speed * Math.sin(enemies[i].angle));
              }
-
              enemies[i].draw();
- 
-	//colision below with bullet or player
-             //if(enemies[i].x > 500)
-             //{
-               //     enemies.splice(i, 1);
-             //}
          }
 
 }
@@ -515,14 +499,12 @@ function bulletHitZombie()
                         if(collision)
                         {
                                 enemies[j].health = enemies[j].health - 1;
-                                console.log(enemies[j].health);
                                 if(enemies[j].health == 0)
                                 {
                                         bullets.splice(i, 1);
                                         enemies.splice(j, 1);
 					pScore = pScore + 10;
 					enemiesMax--;
-					console.log(pScore);	
 					if(enemiesMax == 0)
 					{
 						pLevel++;
@@ -530,9 +512,6 @@ function bulletHitZombie()
 						newLevel(pLevel);
 						arrayTotal = enemiesMax;
 					}				
-                                        //skips checking the removed bullet against rest of enemies
-                                       // i++;
-                                        //j++;
                                 }
                         }
 
@@ -557,21 +536,15 @@ function zombieHitPHouse()
 			    levelSpawnTime(pLevel);
 			    newLevel(pLevel);
 			    arrayTotal = enemiesMax;
-			    console.log(arrayMax);
 			}
 
 			//check players health
 			if(pHealth <= 0)
 			{
-				//console.log(canvas);
-				//console.log(context);
 				clearInterval(id);
 				clearInterval(id2);
 				canvas.removeEventListener('mousemove', rotate, false);
 				canvas.removeEventListener('mousedown', fire, false);				
-				console.log(canvas);
-				console.log(context);
-
 				context.clearRect(0, 0, canvas.width, canvas.height);
 				pContext.clearRect(0, 0, pCanvas.width, pCanvas.height);
 				pCanvas.style.border = "none"; 
@@ -612,7 +585,6 @@ function enterPressed(e)
 
 function pPressed(e)
 {
-	console.log(e.keyCode);
 	if (window.event && window.event.keyCode == 112)
         {
                 pause();
@@ -646,6 +618,7 @@ function pause()
               context.font="30px sans-serif";
               context.fillText("GAME PAUSED!", 300, 250);
               context.fillText("Press P to return to game", 300, 300);
+	      context.fillText("Press Q to return to main menu", 300, 350);
 
 	      document.onkeypress = resume;
 }
@@ -655,7 +628,6 @@ function pause()
 */
 function resume(e)
 {
-	console.log("cake");
 	if (window.event && window.event.keyCode == 112)
         {
                 context.restore();
@@ -664,8 +636,10 @@ function resume(e)
                 canvas.addEventListener('mousemove', rotate, false);
                 canvas.addEventListener('mousedown', fire, false);
 		pCanvas.style.border = "dashed";
-        }else if (e && e.keyCode == 112)
+        }else if (window.event && window.event.keyCode == 113)
               {
+		reset();
+		init();	
               }
 
 
