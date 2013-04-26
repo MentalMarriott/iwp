@@ -1,6 +1,6 @@
 //var context;
 //var x, y;
-var angle, enemiesMax, arrayTotal, time;
+var angle, enemiesMax, arrayTotal, time, killed, fired;
 var previousAngle;
 var bullets = [];
 var enemies = [];
@@ -9,7 +9,7 @@ var pHealth = 50;
 var pLevel = 0;
 var id, id2;
 var enemiesSpeed = 0.3;
-var killHundred, curious, pacifist, over9000;
+var killFifty, curious, pacifist, over9000, firstPlay, gunNut;
 
 var title = new Image();
 title.src = 'title3.png';
@@ -24,8 +24,13 @@ var aboutStart = new Image();
 aboutStart.src = 'about.png';
 
 var about = new Image();
-about.src = 'aboutSelect.png';
+about.src = 'aboutSelect1.png';
 
+var achieveStart = new Image();
+achieveStart.src = 'achieve.png';
+
+var achieve = new Image();
+achieve.src = 'selectAchieve.png';
 
 /**
 *The function is called on load and set up everything,
@@ -35,15 +40,18 @@ function init()
 {
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	console.log(enemies.length);
+	document.getElementById('myCanvasDiv').style.height = canvas.height+"px";
 	mainMenu();
 
 }
+
 
 function mainMenu()
 {
 	context.drawImage(title, canvas.width/2-title.width/2, 10, 600, 200);
 	context.drawImage(originStart, canvas.width/2-originStart.width/2, 260);
 	context.drawImage(about, canvas.width/2-about.width/2, 300+originStart.height);
+	context.drawImage(achieveStart, canvas.width/2-achieveStart.width/2, 400+about.height);
 	pCanvas.style.border = "none";
 
 	canvas.addEventListener('mousemove', choiceHover, false);
@@ -60,9 +68,8 @@ function choiceHover(ev)
 
 	var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width/2) && (y > 260) && (y < 260+start.height); 
 	var aboutBounding = (x > canvas.width/2-about.width/2) && (x < canvas.width/2+about.width/2) && (y > 300+start.height) && (y < ((300+start.height)+about.height));
-//	console.log(startGameBounding);
+	var achieveBounding = (x > canvas.width/2-achieveStart.width/2) && (x < canvas.width/2+achieveStart.width/2) && (y > 400+about.height) && (y < ((400+about.height)+achieveStart.height));
 
-	//console.log(startGameBounding);
 	if(startGameBounding)
 	{
 		context.clearRect(canvas.width/2-start.width/2, 260, start.width, start.height);
@@ -74,14 +81,25 @@ function choiceHover(ev)
 
 	var drawAboutX = canvas.width/2-about.width/2;
 	var drawAboutY = 300 + start.height; 
-		if(aboutBounding)
-		{
-			context.clearRect(canvas.width/2-about.width/2, 300+start.height, about.width, about.height);
-			context.drawImage(about, drawAboutX, drawAboutY);
-		}else{
-                	context.clearRect(((canvas.width/2)-(aboutStart.width/2)), (300+start.height), aboutStart.width, aboutStart.height);
-	                context.drawImage(aboutStart, drawAboutX, drawAboutY);
-		}
+	
+	if(aboutBounding)
+	{
+		context.clearRect(canvas.width/2-about.width/2, 300+start.height, about.width, about.height);
+		context.drawImage(about, drawAboutX, drawAboutY);
+	}else{
+               	context.clearRect(((canvas.width/2)-(aboutStart.width/2)), (300+start.height), aboutStart.width, aboutStart.height);
+	        context.drawImage(aboutStart, drawAboutX, drawAboutY);
+	}
+
+	if(achieveBounding)
+	{
+		context.clearRect(((canvas.width/2)-(achieveStart.width/2)), (400+about.height), achieveStart.width, achieveStart.height);
+		context.drawImage(achieve, canvas.width/2-achieveStart.width/2, 400+about.height);
+	}else{
+		context.clearRect(((canvas.width/2)-(achieveStart.width/2)), (400+about.height), achieveStart.width, achieveStart.height);
+                context.drawImage(achieveStart, canvas.width/2-achieveStart.width/2, 400+about.height);
+	
+	}
 	
 
 }
@@ -96,11 +114,12 @@ function choiceClick(ev)
         var start = new Image();
         start.src = 'start.png';
 	
-	var star
+	//var star
 
         var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width) && (y > 260) && (y < 260+start.height);
 //      console.log(startGameBounding);
 	var aboutBounding = (x > canvas.width/2-about.width/2) && ( x < canvas.width/2+about.width) && (y > 300+originStart.height) && (y < (300+originStart.height)+about.height);
+	var achieveBounding = (x > canvas.width/2-achieveStart.width/2) && (x < canvas.width/2+achieveStart.width/2) && (y > 400+about.height) && (y < ((400+about.height)+achieveStart.height));
 
         if(startGameBounding)
         {
@@ -109,9 +128,68 @@ function choiceClick(ev)
 
 	if(aboutBounding)
 	{
+		curious = true;
+		localStorage.curious = true;
 		aboutPage();
 	}
+
+	if(achieveBounding)
+	{
+		achieveList();
+	}
 }
+
+
+function achieveList()
+{
+        canvas.removeEventListener('mousemove', choiceHover, false);
+        canvas.removeEventListener('mousedown', choiceClick, false);
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+	console.log(localStorage.pacifist);	
+
+        context.lineWidth=1;
+        context.fillStyle="#fff";
+        context.lineStyle="#ff0";
+        context.font="18px sans-serif";
+        context.fillText("ACHIEVES!", 300, 100);
+        context.fillText("Curious: ", 300, 225);
+	if(localStorage.curious)
+	{
+		context.fillText("GOT!", 600, 225);
+	}
+        context.fillText("Kill Fifty Zombies(Well...): ", 300, 275);
+	if(localStorage.killFifty)
+	{
+		context.fillText("GOT!", 600, 275);
+	}
+        context.fillText("Pacifist(Do not fire a bullet): ", 300, 325);
+	if(localStorage.pacifist)
+	{
+		context.fillText("GOT!", 600, 325);
+	}
+	context.fillText("Gun Nut! (fire over 100 shots):", 300, 375);
+	if(localStorage.gunNut)
+	{
+		context.fillText("GOT!", 600, 375);
+	}
+        context.fillText("OVER 9000!....Points: ", 300, 425);
+	if(localStorage.over9000)
+	{
+		context.fillText("GOT!", 600, 425);
+	}
+        context.fillText("Play for the first time: ", 300, 475);
+	if(localStorage.firstPlay)
+	{
+		context.fillText("GOT!", 600, 475);
+	}
+	context.fillText("Press enter to return to main menu", 300, 550);
+
+        document.onkeypress = enterPressed;
+
+}
+
 
 function aboutPage()
 {
@@ -121,14 +199,14 @@ function aboutPage()
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
 	context.lineWidth=1;
-        context.fillStyle="#cof";
+        context.fillStyle="#fff";
         context.lineStyle="#ff0";
         context.font="18px sans-serif";
         context.fillText("ATTACK OF THE ZOMBLES!", 300, 100);
 	context.fillText("Rules:", 300, 200);
 	context.fillText("Point mouse at the zombies as they come for your home.", 300, 275);
 	context.fillText("When they are in sight click your mouse and destroy them.", 300, 300);
-	context.fillText("If they get to close they might break down your fences and get you!", 300, 325);
+	context.fillText("If they get to close they will break down your fences and get you!", 300, 325);
 	context.fillText("Press enter to return to menu", 300, 375);
 
 	document.onkeypress = enterPressed;
@@ -154,6 +232,10 @@ function gameInit()
 
 	//sets up start level
 	pLevel = 1;
+	killed = 0;
+	fired = 0;
+
+	localStorage.firstPlay = true;	
 
         //player.draw();
         var player = new playerObj();
@@ -258,7 +340,7 @@ function updateCanvas()
 function drawGui()
 {
 	context.lineWidth=1;
-	context.fillStyle="#cof";
+	context.fillStyle="#fff";
 	context.lineStyle="#ff0";
 	context.font="18px sans-serif";
 	context.fillText("Score: " + pScore + "  HP: " + pHealth + " Level: " + pLevel + "  Enemies remaining: " + enemiesMax, 50, 30);
@@ -364,6 +446,11 @@ function fire(ev)
 	x = "NULL"; 
 	y = "NULL";
 
+	fired++;
+	if(fired >= 100)
+	{
+		localStorage.gunNut = true;
+	}
 	var bullet = new bulletObj(x, y);
 	bullets.push(bullet);
 }
@@ -420,7 +507,7 @@ function bulletUpdate()
 				
 		 //check if bullets are still in bounds. 
 		 //If no remove from array
-                if(bullets[i].x > 1000 || bullets[i].x < 0 || bullets[i].y > 500 || bullets[i].y < 0)
+                if(bullets[i].x > canvas.width || bullets[i].x < 0 || bullets[i].y > canvas.height || bullets[i].y < 0)
                 {       
                         bullets.splice(i, 1);
                 }
@@ -435,7 +522,7 @@ function enemyObj(x , y)
 	enemy.src = 'enemy3.png';
 
 	this.speed = enemiesSpeed;
-	this.health = 3;
+	//this.health = 3;
 	this.damage = 2;
 
 	this.width = enemy.width;
@@ -499,12 +586,14 @@ function bulletHitZombie()
                         if(collision)
                         {
                                 enemies[j].health = enemies[j].health - 1;
-                                if(enemies[j].health == 0)
-                                {
+				//j++;
+                                //if(enemies[j].health == 0)
+                                //{
                                         bullets.splice(i, 1);
                                         enemies.splice(j, 1);
 					pScore = pScore + 10;
 					enemiesMax--;
+					killed++;
 					if(enemiesMax == 0)
 					{
 						pLevel++;
@@ -512,7 +601,8 @@ function bulletHitZombie()
 						newLevel(pLevel);
 						arrayTotal = enemiesMax;
 					}				
-                                }
+                                //i}
+				j++;
                         }
 
 		}
@@ -541,6 +631,10 @@ function zombieHitPHouse()
 			//check players health
 			if(pHealth <= 0)
 			{
+				if(fired == 0)
+				{
+					localStorage.pacifist = true;
+				}
 				clearInterval(id);
 				clearInterval(id2);
 				canvas.removeEventListener('mousemove', rotate, false);
@@ -587,6 +681,7 @@ function pPressed(e)
 {
 	if (window.event && window.event.keyCode == 112)
         {
+		console.log("D");
                 pause();
         }else if (e && e.keyCode == 112)
               {
@@ -703,13 +798,3 @@ function clear()
 
 //------------------------------Achievements--------------------------------\\
 
-/**
- *
- */
-function achieve()
-{
-
-
-
-
-}
