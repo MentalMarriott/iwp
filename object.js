@@ -23,6 +23,12 @@ start.src = 'start1.png';
 var originStart = new Image();
 originStart.src = 'start.png';
 
+var help = new Image();
+help.src = 'help.png';
+
+var helpSelect = new Image();
+helpSelect.src = 'helpSelect.png';
+
 var aboutStart = new Image();
 aboutStart.src = 'about.png';
 
@@ -54,7 +60,7 @@ function mainMenu()
 {
 	context.drawImage(title, canvas.width/2-title.width/2, 10, 600, 200);
 	context.drawImage(originStart, canvas.width/2-originStart.width/2, 260);
-	context.drawImage(about, canvas.width/2-about.width/2, 300+originStart.height);
+	context.drawImage(help, canvas.width/2-about.width/2, 300+originStart.height);
 	context.drawImage(achieveStart, canvas.width/2-achieveStart.width/2, 400+about.height);
 	pCanvas.style.border = "none";
 
@@ -77,8 +83,8 @@ function choiceHover(ev)
 	y = pos[1];
 
 	var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width/2) && (y > 260) && (y < 260+start.height); 
-	var aboutBounding = (x > canvas.width/2-about.width/2) && (x < canvas.width/2+about.width/2) && (y > 300+start.height) && (y < ((300+start.height)+about.height));
-	var achieveBounding = (x > canvas.width/2-achieveStart.width/2) && (x < canvas.width/2+achieveStart.width/2) && (y > 400+about.height) && (y < ((400+about.height)+achieveStart.height));
+	var helpBounding = (x > canvas.width/2-about.width/2) && (x < canvas.width/2+about.width/2) && (y > 300+start.height) && (y < ((300+start.height)+about.height));
+	var achieveBounding = (x > canvas.width/2-achieveStart.width/2) && (x < canvas.width/2+achieveStart.width/2) && (y > 400+help.height) && (y < ((400+help.height)+achieveStart.height));
 
 	if(startGameBounding)
 	{
@@ -92,13 +98,13 @@ function choiceHover(ev)
 	var drawAboutX = canvas.width/2-about.width/2;
 	var drawAboutY = 300 + start.height; 
 	
-	if(aboutBounding)
+	if(helpBounding)
 	{
 		context.clearRect(canvas.width/2-about.width/2, 300+start.height, about.width, about.height);
-		context.drawImage(about, drawAboutX, drawAboutY);
+		context.drawImage(helpSelect, drawAboutX, drawAboutY);
 	}else{
                	context.clearRect(((canvas.width/2)-(aboutStart.width/2)), (300+start.height), aboutStart.width, aboutStart.height);
-	        context.drawImage(aboutStart, drawAboutX, drawAboutY);
+	        context.drawImage(help, drawAboutX, drawAboutY);
 	}
 
 	if(achieveBounding)
@@ -245,7 +251,7 @@ function gameInit()
 	killed = 0;
 	fired = 0;
 
-//	backMusic.play();
+	backMusic.play();
 
 	localStorage.firstPlay = true;	
 
@@ -597,26 +603,22 @@ function bulletHitZombie()
                         if(collision)
                         {
                                 enemies[j].health = enemies[j].health - 1;
-				//j++;
-                                //if(enemies[j].health == 0)
-                                //{
-                                        bullets.splice(i, 1);
-                                        enemies.splice(j, 1);
-					pScore = pScore + 10;
-					enemiesMax--;
-					killed++;
-					if(killed >= 50)
-					{
-						localStorage.pestControl = true;
-					}
-					if(enemiesMax == 0)
-					{
-						pLevel++;
-						levelSpawnTime(pLevel);
-						newLevel(pLevel);
-						arrayTotal = enemiesMax;
-					}				
-                                //i}
+                                bullets.splice(i, 1);
+                                enemies.splice(j, 1);
+				pScore = pScore + 10;
+				enemiesMax--;
+				killed++;
+				if(killed >= 50)
+				{
+					localStorage.pestControl = true;
+				}
+				if(enemiesMax == 0)
+				{
+					pLevel++;
+					levelSpawnTime(pLevel);
+					newLevel(pLevel);
+					arrayTotal = enemiesMax;
+				}				 
 				j++;
 				i++;
                         }
@@ -655,7 +657,10 @@ function zombieHitPHouse()
 				{
 					localStorage.badShot = true;
 				}
-				checkHighScore();
+				if(checkHighScore())
+				{
+					localStorage.highScore = pScore;
+				}
 				
 				clearInterval(id);
 				clearInterval(id2);
@@ -770,13 +775,13 @@ function resume(e)
 function checkHighScore()
 {
 //	var currentScore = parseInt(localStorage.highScore);
-//	var newHighScore = false;
+	var newHighScore = false;
 	
-//	if(pScore > currentScore)
-//	{
-		localStorage.highScore = pScore;
-//	}
-	
+	if(pScore > Number(localStorage.highScore))
+	{
+		newHighScore = true;
+	}
+	return newHighScore;
 } 
 
 
