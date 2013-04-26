@@ -12,7 +12,7 @@ var enemiesSpeed = 0.3;
 var killFifty, curious, pacifist, over9000, firstPlay, gunNut;
 
 var backMusic = new Audio("backMusic.wav");
-var fireSound = new Audio("fire.wav");
+var fireSound = new Audio("rifle.wav");
 
 var title = new Image();
 title.src = 'title3.png';
@@ -61,7 +61,8 @@ function mainMenu()
 	context.drawImage(title, canvas.width/2-title.width/2, 10, 600, 200);
 	context.drawImage(originStart, canvas.width/2-originStart.width/2, 260);
 	context.drawImage(help, canvas.width/2-about.width/2, 300+originStart.height);
-	context.drawImage(achieveStart, canvas.width/2-achieveStart.width/2, 400+about.height);
+	context.drawImage(achieveStart, canvas.width/2-achieveStart.width/2, 400+achieveStart.height);
+	context.drawImage(aboutStart, canvas.width/2-aboutStart.width/2, 475+aboutStart.height);
 	pCanvas.style.border = "none";
 
 	context.lineWidth=1;
@@ -85,6 +86,7 @@ function choiceHover(ev)
 	var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width/2) && (y > 260) && (y < 260+start.height); 
 	var helpBounding = (x > canvas.width/2-about.width/2) && (x < canvas.width/2+about.width/2) && (y > 300+start.height) && (y < ((300+start.height)+about.height));
 	var achieveBounding = (x > canvas.width/2-achieveStart.width/2) && (x < canvas.width/2+achieveStart.width/2) && (y > 400+help.height) && (y < ((400+help.height)+achieveStart.height));
+	var aboutBounding = (x > canvas.width/2-aboutStart.width/2) && (x < canvas.width/2+aboutStart.width/2) && (y > 475+achieveStart.height) && (y < ((475+achieveStart.height)+aboutStart.height));
 
 	if(startGameBounding)
 	{
@@ -114,9 +116,18 @@ function choiceHover(ev)
 	}else{
 		context.clearRect(((canvas.width/2)-(achieveStart.width/2)), (400+about.height), achieveStart.width, achieveStart.height);
                 context.drawImage(achieveStart, canvas.width/2-achieveStart.width/2, 400+about.height);
-	
 	}
-	
+
+	console.log(aboutBounding);
+
+	if(aboutBounding)
+	{
+		context.clearRect(((canvas.width/2)-(aboutStart.width/2)), (475+aboutStart.height), aboutStart.width, aboutStart.height);
+		context.drawImage(about, canvas.width/2-about.width/2, 475+about.height);
+	}else{
+		context.clearRect(((canvas.width/2)-(aboutStart.width/2)), (475+aboutStart.height), aboutStart.width, aboutStart.height);
+		context.drawImage(aboutStart, canvas.width/2-about.width/2, 475+about.height);
+	}	
 
 }
 
@@ -134,15 +145,16 @@ function choiceClick(ev)
 
         var startGameBounding = (x > canvas.width/2-start.width/2) && (x < canvas.width/2+start.width) && (y > 260) && (y < 260+start.height);
 //      console.log(startGameBounding);
-	var aboutBounding = (x > canvas.width/2-about.width/2) && ( x < canvas.width/2+about.width) && (y > 300+originStart.height) && (y < (300+originStart.height)+about.height);
+	var helpBounding = (x > canvas.width/2-about.width/2) && ( x < canvas.width/2+about.width) && (y > 300+originStart.height) && (y < (300+originStart.height)+about.height);
 	var achieveBounding = (x > canvas.width/2-achieveStart.width/2) && (x < canvas.width/2+achieveStart.width/2) && (y > 400+about.height) && (y < ((400+about.height)+achieveStart.height));
+	var aboutBounding = (x > canvas.width/2-aboutStart.width/2) && (x < canvas.width/2+aboutStart.width/2) && (y > 475+achieveStart.height) && (y < ((475+achieveStart.height)+aboutStart.height));
 
         if(startGameBounding)
         {
 		gameInit();
         }
 
-	if(aboutBounding)
+	if(helpBounding)
 	{
 		curious = true;
 		localStorage.curious = true;
@@ -153,8 +165,33 @@ function choiceClick(ev)
 	{
 		achieveList();
 	}
+
+	if(aboutBounding)
+	{
+		aboutInfo();
+	}
 }
 
+function aboutInfo()
+{
+        canvas.removeEventListener('mousemove', choiceHover, false);
+        canvas.removeEventListener('mousedown', choiceClick, false);
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        context.lineWidth=1;
+        context.fillStyle="#fff";
+        context.lineStyle="#ff0";
+        context.font="18px sans-serif";
+        context.fillText("ABOUT!", 300, 100);
+        context.fillText("This is my game I made for my university assignment ", 300, 225);
+	context.fillText("The player graphic is an edited sprite from http://opengameart.org", 300, 275);
+	context.fillText("There are also sound files from http://www.freesfx.co.uk/", 300, 325);
+
+        context.fillText("Press enter to return to main menu", 300, 400);
+        document.onkeypress = enterPressed;
+
+}
 
 function achieveList()
 {
