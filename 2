@@ -11,9 +11,6 @@ var id, id2;
 var enemiesSpeed = 0.3;
 var killFifty, curious, pacifist, over9000, firstPlay, gunNut;
 
-var backMusic = new Audio("backMusic.wav");
-var fireSound = new Audio("fire.wav");
-
 var title = new Image();
 title.src = 'title3.png';
 
@@ -43,7 +40,6 @@ function init()
 {
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	console.log(enemies.length);
-	localStorage.highScore = 0;
 	document.getElementById('myCanvasDiv').style.height = canvas.height+"px";
 	mainMenu();
 
@@ -58,19 +54,13 @@ function mainMenu()
 	context.drawImage(achieveStart, canvas.width/2-achieveStart.width/2, 400+about.height);
 	pCanvas.style.border = "none";
 
-	context.lineWidth=1;
-        context.fillStyle="#fff";
-        context.lineStyle="#ff0";
-        context.font="18px sans-serif";
-        context.fillText("Current High Score: " + localStorage.highScore, 775, 50);
-
 	canvas.addEventListener('mousemove', choiceHover, false);
         canvas.addEventListener('mousedown', choiceClick, false);
 }
 
 function choiceHover(ev)
 {
-//	mousePosDisplay(ev);
+	mousePosDisplay(ev);
 	var x, y;
 	var pos = mouseLoc(ev);
 	x = pos[0];
@@ -169,8 +159,8 @@ function achieveList()
 	{
 		context.fillText("GOT!", 600, 225);
 	}
-        context.fillText("Pest Control(Kill 50 Zombies): ", 300, 275);
-	if(localStorage.pestControl)
+        context.fillText("Kill Fifty Zombies(Well...): ", 300, 275);
+	if(localStorage.killFifty)
 	{
 		context.fillText("GOT!", 600, 275);
 	}
@@ -184,8 +174,8 @@ function achieveList()
 	{
 		context.fillText("GOT!", 600, 375);
 	}
-        context.fillText("Bad Shot(Die before level 4): ", 300, 425);
-	if(localStorage.badShot)
+        context.fillText("Not really a Monster Hunter(Die on level 1): ", 300, 425);
+	if(localStorage.notGood)
 	{
 		context.fillText("GOT!", 600, 425);
 	}
@@ -245,8 +235,6 @@ function gameInit()
 	killed = 0;
 	fired = 0;
 
-//	backMusic.play();
-
 	localStorage.firstPlay = true;	
 
         //player.draw();
@@ -263,7 +251,7 @@ function gameInit()
         //rand interval between 1 30
 	
         var spawnTime = levelSpawnTime(pLevel);
-        time = Math.floor((Math.random()*(2500-spawnTime+1))+spawnTime);
+        time = Math.floor((Math.random()*(3000-spawnTime+1))+spawnTime);
         id2 = setInterval(updateEnemyAdd, time/1);
 
 }
@@ -283,7 +271,7 @@ function newLevel(level)
 function levelSpawnTime(level)
 {
 	var time; 
-	time = 1500 / level; 
+	time = 14 / level; 
 	return time;
 }
 
@@ -338,8 +326,12 @@ function updateCanvas()
 
 	drawGui();	
 
+//	zombieHitPHouse();
+
 	bulletUpdate();
 	
+	//bulletHitZombie();
+
 	enemyUpdate();
 
 	zombieHitPHouse();
@@ -451,7 +443,6 @@ var mouseLoc = function(ev)
 */
 function fire(ev)
 {	
-	console.log("cake");
 	x = "NULL"; 
 	y = "NULL";
 
@@ -460,8 +451,6 @@ function fire(ev)
 	{
 		localStorage.gunNut = true;
 	}
-	fireSound.play();
-		
 	var bullet = new bulletObj(x, y);
 	bullets.push(bullet);
 }
@@ -502,7 +491,7 @@ function bulletObj(x, y)
 */
 function bulletUpdate()
 {
-	    var speed = 10.0;    
+	    var speed = 5.0;    
             for(var i = 0; i < bullets.length; i++)
             {      
 		if(bullets[i].x == "NULL")
@@ -605,10 +594,6 @@ function bulletHitZombie()
 					pScore = pScore + 10;
 					enemiesMax--;
 					killed++;
-					if(killed >= 50)
-					{
-						localStorage.pestControl = true;
-					}
 					if(enemiesMax == 0)
 					{
 						pLevel++;
@@ -618,7 +603,6 @@ function bulletHitZombie()
 					}				
                                 //i}
 				j++;
-				i++;
                         }
 
 		}
@@ -651,12 +635,6 @@ function zombieHitPHouse()
 				{
 					localStorage.pacifist = true;
 				}
-				if(pLevel == 3)
-				{
-					localStorage.badShot = true;
-				}
-				checkHighScore();
-				
 				clearInterval(id);
 				clearInterval(id2);
 				canvas.removeEventListener('mousemove', rotate, false);
@@ -764,20 +742,7 @@ function resume(e)
 
 
 //----------------------------------handy functions-----------------------------------------
-/**
-* converts high score from string to int and checks if new score is higher
-*/
-function checkHighScore()
-{
-//	var currentScore = parseInt(localStorage.highScore);
-//	var newHighScore = false;
-	
-//	if(pScore > currentScore)
-//	{
-		localStorage.highScore = pScore;
-//	}
-	
-} 
+
 
 
 
@@ -791,7 +756,6 @@ function reset()
 	pLevel = 1;
 	enemies = [];
 	bullets = [];
-	backMusic.pause();
 }
 
 
